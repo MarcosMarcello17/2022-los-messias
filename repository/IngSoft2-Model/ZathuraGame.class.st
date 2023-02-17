@@ -65,11 +65,6 @@ ZathuraGame >> addCardToTable: aCard [
 	cardManager addCardToTable: aCard.
 ]
 
-{ #category : #resendingToBoard }
-ZathuraGame >> applyLastEffectOn: aShip [ 
-	board applyLastEffectOn: (aShip).
-]
-
 { #category : #actions }
 ZathuraGame >> applyLastEffectOn: aShip with: aRepeatCard [
 
@@ -88,12 +83,6 @@ ZathuraGame >> assertZathuraHasNotBeenPlayed [
 
 	(timesPlayed == 1) ifTrue: [ 
 		Error signal: 'Zathura cannot be played more than once' ]
-]
-
-{ #category : #accessing }
-ZathuraGame >> cardApplicator [
-
-	^ cardApplicator
 ]
 
 { #category : #accessing }
