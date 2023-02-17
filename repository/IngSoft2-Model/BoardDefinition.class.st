@@ -51,13 +51,6 @@ BoardDefinition class >> assertLockersAreValid: aNumberOfLockers [
 ]
 
 { #category : #asserting }
-BoardDefinition class >> assertParsecsAreValid: parsecs [
-
-	parsecs > 0 ifFalse: [ 
-		Error signal: 'Board Structure cannot have less than zero parsecs' ]
-]
-
-{ #category : #asserting }
 BoardDefinition class >> assertUnitIsValid: distance [
 
 	distance  > 0 ifFalse: [ 
@@ -102,10 +95,4 @@ BoardDefinition >> lockerAt: num [
 BoardDefinition >> numberOfLockers [
 
 ^ lockers size
-]
-
-{ #category : #accesing }
-BoardDefinition >> parsecsPerLocker [
-
-	^ (lockers size / parsecs) asFloat
 ]

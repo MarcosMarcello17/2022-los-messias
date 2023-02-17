@@ -53,16 +53,6 @@ SequencialLoadedDie >> initializeWith: aCollectionOfNumbers [
 ]
 
 { #category : #initialization }
-SequencialLoadedDie >> loadSequence: aCollectionOfNumbers [
-
-	| collectionOfDies |
-	collectionOfDies := OrderedCollection new.
-	aCollectionOfNumbers do: [ :number | 
-		collectionOfDies add: (LoadedDie with: number) ].
-	^ collectionOfDies
-]
-
-{ #category : #initialization }
 SequencialLoadedDie >> loadSequenceOfDiesWith: aCollectionOfNumbers [
 
 	| collectionOfDies |

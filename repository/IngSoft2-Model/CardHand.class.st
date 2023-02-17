@@ -13,11 +13,6 @@ CardHand class >> of: aShip [
 	^self new initializeCardHandOf: aShip with: {  }.
 ]
 
-{ #category : #'instance creation' }
-CardHand class >> of: aShip with: aCollectionOfCards [ 
-	^ self new initializeCardHandOf: aShip with: aCollectionOfCards .
-]
-
 { #category : #action }
 CardHand >> add: aCard [
 	handOfCards add: aCard.

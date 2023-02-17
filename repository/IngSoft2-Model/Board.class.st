@@ -68,18 +68,6 @@ Board >> applyEffectOnLockerOrCorrectPositionIfShipCrossedTheFinishLine: aShip [
 	
 ]
 
-{ #category : #private }
-Board >> applyEffectOnLockerOrCorrectThePositionOfWinnerTo: aShip [
-
-	| thisLocker |
-	thisLocker := boardDefinition lockerAt:
-		              (self numberOfLockerOf: aShip) + 1.
-	lastEffect := thisLocker.
-	(self hasCrossFinishLine: aShip) ifFalse: [ 
-		thisLocker applyFor: aShip on: self] ifTrue: [ self correctPositionOfWinner: aShip ]
-	
-]
-
 { #category : #moving }
 Board >> applyLastEffectOn: aShip [
 
@@ -144,15 +132,6 @@ Board >> move: aShip byParsecs: numberOfParsecs [
 	self
 		move: aShip
 		by: (numberOfParsecs * boardDefinition distancePerLockerAsParsecs ) floor.
-]
-
-{ #category : #private }
-Board >> moveAllExcept: aShip by: aNumberOfLockers [
-
-	| ships |
-	ships := (positionOfShips collect: [ :positionOfShip | 
-		          positionOfShip ship ]) copyWithout: aShip.
-	ships do: [ :ship | self move: ship by: aNumberOfLockers * -1 ]
 ]
 
 { #category : #private }

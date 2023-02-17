@@ -4,6 +4,11 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
+{ #category : #accessing }
+UnitMeasure >> initializeWith: value [ 
+	self subclassResponsibility
+]
+
 { #category : #evaluating }
 UnitMeasure >> value [
 
