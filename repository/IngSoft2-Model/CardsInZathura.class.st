@@ -43,6 +43,11 @@ CardsInZathura >> findChangeOfRoll: aShip [
 	^ cardsOnTable rollChangeOf: aShip
 ]
 
+{ #category : #accessing }
+CardsInZathura >> getNumberOfCardsOf: aShip [ 
+	^zathuraGame getNumberOfCardsOf: aShip.
+]
+
 { #category : #private }
 CardsInZathura >> giveCard [
 

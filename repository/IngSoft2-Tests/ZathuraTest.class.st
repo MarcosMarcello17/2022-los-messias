@@ -1191,6 +1191,39 @@ ZathuraTest >> testShipLandsOnAWormholeEffectAndGoesBackOneLap [
 		in: zathura
 ]
 
+{ #category : #'test-sprintEffect' }
+ZathuraTest >> testShipsFallIntoACardEffectLockerThenFallsIntoASprintEffectLockerAndMoves3Lockers [
+
+	| die ships zathura boardStructure lockers |
+	die := SequencialLoadedDie with: { 3. 1. 1.}.
+	ships := OrderedCollection
+		         with: 'BlueShip'
+		         with: 'RedShip'
+		         with: 'GreenShip'.
+
+	lockers := OrderedCollection new.
+	1 to: 10 do: [ :number | 
+	lockers add: LockerNoEffect new ].
+	lockers at: 4 put: (CardEffect new).
+	lockers at: 7 put: (SprintEffect new).
+
+	boardStructure := BoardDefinition 
+		  with: lockers
+		  and: (Parsec with: 100)
+		  played: 2.
+		
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardStructure
+		           rolling: die
+		           withCards: { OverloadCard new }.
+	zathura playTurn.
+	zathura playTurn.
+	zathura playTurn.
+	zathura playTurn.
+	self assert: 'BlueShip' isAtLocker: 9 in: zathura . 
+]
+
 { #category : #'test-board' }
 ZathuraTest >> testShipsFallIntoAHyperJumpLockerAndMovesByTheLightYearsInASequence [
 
@@ -1281,6 +1314,32 @@ ZathuraTest >> testShipsFallIntoAHyperJumpLockerAndMovesByTheParsecsInASequence 
 		isAt: 2
 		with: 0
 		in: zathura
+]
+
+{ #category : #'test-sprintEffect' }
+ZathuraTest >> testShipsFallIntoASprintLockerAndMovesAPositionForEachCardInHand [
+
+	| die ships zathura boardStructure |
+	die := LoadedDie with: 1.
+	ships := OrderedCollection
+		         with: 'BlueShip'
+		         with: 'RedShip'
+		         with: 'GreenShip'.
+
+	boardStructure := self
+		                  boardDefinitionWithOnly:
+		                  (SprintEffect new)
+		                  at: 2
+		                  of: 10
+		                  andParsec: 100
+		                  played: 3.
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardStructure
+		           rolling: die
+		           withCards: { OverloadCard new }.
+	zathura playTurn.
+	self assert: 'BlueShip' isAtLocker: 3 in: zathura .
 ]
 
 { #category : #'test-zathuraGame' }

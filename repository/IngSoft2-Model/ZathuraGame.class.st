@@ -93,6 +93,11 @@ ZathuraGame >> checkIfWon: aShip [
 	finished := true
 ]
 
+{ #category : #accessing }
+ZathuraGame >> getNumberOfCardsOf: aShip [ 
+	^(cardHands cardHandOf: aShip) sizeOfCardHand.
+]
+
 { #category : #actions }
 ZathuraGame >> giveCardTo: aShip [ 
 	cardHands giveCard: (cardManager giveCard ) to: aShip.
