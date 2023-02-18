@@ -386,6 +386,42 @@ ZathuraTest >> testBlueShipThrowsARedoCardToRepeatAnotherRedoCardThrownToASpeedC
 		in: zathura
 ]
 
+{ #category : #'test-reversePolarityCard' }
+ZathuraTest >> testBlueShipThrowsAReversePolarityCardToReverseAtomicBombAndAtomicBombDontAffectAnyone [
+
+	| die ships zathura boardDefinition |
+	die := LoadedDie with: 3.
+	ships := OrderedCollection
+		         with: 'BlueShip'
+		         with: 'RedShip'
+		         with: 'GreenShip'.
+
+	boardDefinition := self
+		                   boardDefinitionWithOnly: AtomicBombEffect new
+		                   at: 7
+		                   of: 10
+		                   andParsec: 50
+		                   played: 3.
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardDefinition
+		           rolling: die
+		           withCards: { ReversePolarityCard to: AtomicBombEffect new. }.
+		zathura throws: ReversePolarityCard new to: AtomicBombEffect new from: 'BlueShip'.
+	zathura playTurn.
+	zathura playTurn.
+	zathura playTurn.
+	zathura playTurn.
+	self
+		assert: 'BlueShip' isAtLocker: 6 in: zathura.
+	self
+		assert: 'RedShip'
+		isAtLocker: 3 in: zathura .
+	self
+		assert: 'GreenShip'
+		isAtLocker: 3 in: zathura .
+]
+
 { #category : #'test-speedCard' }
 ZathuraTest >> testBlueShipThrowsASpeedCardToRedShipAndRedShipMovesRolledNumberPlusOneAllGame [
 

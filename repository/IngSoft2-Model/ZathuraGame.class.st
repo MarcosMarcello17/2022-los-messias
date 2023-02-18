@@ -184,12 +184,32 @@ ZathuraGame >> removeFromCardsOnTable: aCard with: aCancellationCard [
 	cardManager removeFromCardsOnTable: aCard with: aCancellationCard 
 ]
 
+{ #category : #'accessing - private' }
+ZathuraGame >> reverseEffectOf: anEffect [ 
+	board reverseEffectOf: anEffect .
+]
+
 { #category : #'accessing - attributes' }
 ZathuraGame >> ships [
 	| nameShips |
 	nameShips := OrderedCollection new.
 	ships do: [ :aShip | nameShips add: aShip ].
 	^nameShips.
+]
+
+{ #category : #throwing }
+ZathuraGame >> throw: aReversePolarityCard from: aShip to: anEffect [ 
+	cardThrower throws: aReversePolarityCard  from: aShip to: anEffect .
+]
+
+{ #category : #throwing }
+ZathuraGame >> throw: aReversePolarityCard to: aLockerEffect [ 
+	cardThrower throw: aReversePolarityCard  to: aLockerEffect  on: self. 
+]
+
+{ #category : #throwing }
+ZathuraGame >> throw: aReversePolarityCard to: aClass on: aZathuraGame [ 
+	self shouldBeImplemented.
 ]
 
 { #category : #'card - actions' }

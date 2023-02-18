@@ -20,6 +20,11 @@ CardThrower >> createNewWith: aGroupOfCardHands in: aZathuraGame [
 	zathura := aZathuraGame.
 ]
 
+{ #category : #throwing }
+CardThrower >> throw: aReversePolarityCard to: aClass on: aZathuraGame [ 
+	self shouldBeImplemented.
+]
+
 { #category : #throwin }
 CardThrower >> throw: aCancellationCard to: destinationShip removing: aCard from: sourceShip [ 
 	(cardHands cardHandOf: sourceShip)

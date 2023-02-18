@@ -204,6 +204,13 @@ Board >> rankingOf: aShip [
 	^ self shipsSortedByPosition indexOf: aShip
 ]
 
+{ #category : #actions }
+Board >> reverseEffectOf: anEffect [ 
+	| locker |
+	locker := boardDefinition findALockerOf: anEffect .
+	locker reverse.
+]
+
 { #category : #ranking }
 Board >> shipsSortedByPosition [
 

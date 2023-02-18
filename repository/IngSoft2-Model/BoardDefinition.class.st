@@ -66,10 +66,21 @@ BoardDefinition class >> with: lockers and: unit played: laps [
 	^ self new initializeWith: lockers and: unit played: laps
 ]
 
+{ #category : #asserting }
+BoardDefinition >> assertBoardHasLockerOf: aClass [ 
+	self shouldBeImplemented.
+]
+
 { #category : #accessing }
 BoardDefinition >> distancePerLockerAsParsecs [
 
 	^ (lockers size / distance valueAsParsec ) asFloat
+]
+
+{ #category : #accessing }
+BoardDefinition >> findALockerOf: anEffect [ 
+	^(lockers  select: [ :eff | eff = anEffect  ]) first
+	
 ]
 
 { #category : #initialization }

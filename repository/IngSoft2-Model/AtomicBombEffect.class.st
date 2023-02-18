@@ -28,5 +28,5 @@ Class {
 
 { #category : #action }
 AtomicBombEffect >> applyFor: aShip on: aBoard [
-aBoard moveAllToLockerZero
+reverse ifFalse: [aBoard moveAllToLockerZero]
 ]
