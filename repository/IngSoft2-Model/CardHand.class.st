@@ -44,6 +44,11 @@ CardHand >> ship [
 	^ ship
 ]
 
+{ #category : #accessing }
+CardHand >> sizeOfCardHand [
+	^(handOfCards size)
+]
+
 { #category : #throwing }
 CardHand >> throw: aCancelationCard removingToAll: aCard on: aZathuraGame [
 

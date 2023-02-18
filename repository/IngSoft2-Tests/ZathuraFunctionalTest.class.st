@@ -13,7 +13,8 @@ ZathuraFunctionalTest >> boardDefinitionWithRandomEffects [
 		            (Parsec with: 4).
 		            (Parsec with: 8) }.
 	points := { 
-		          (ProbabilityPoint initializeEvent: LockerNoEffect new withProbability: 30).
+		          (ProbabilityPoint initializeEvent: LockerNoEffect new withProbability: 20).
+		(ProbabilityPoint initializeEvent: SprintEffect new withProbability: 10).
 		          (ProbabilityPoint initializeEvent: AtomicBombEffect new withProbability: 2).
 		          (ProbabilityPoint
 			           initializeEvent: (HyperJumpEffect with: sequence)

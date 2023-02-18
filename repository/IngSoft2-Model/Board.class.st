@@ -149,6 +149,13 @@ Board >> moveAllToLockerZero [
 	positionOfShips do: [ :aShip | self moveToLockerZero: aShip ship ]
 ]
 
+{ #category : #moving }
+Board >> moveByNumberOfCards: aShip [ 
+	| numberCards |
+	numberCards := cardManager getNumberOfCardsOf: aShip.
+	self move: aShip  by: numberCards 
+]
+
 { #category : #private }
 Board >> moveToFinalPosition: aShip [
 

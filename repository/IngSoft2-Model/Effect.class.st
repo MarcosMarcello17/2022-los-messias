@@ -33,7 +33,6 @@ Effect >> = anEffect [
 ]
 
 { #category : #action }
-Effect >> applyFor: aShip on: aBoard [
-
-	self subclassResponsibility
+Effect >> applyFor: aShip on: aBoard [ 
+	^ self subclassResponsibility
 ]
