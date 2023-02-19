@@ -151,6 +151,14 @@ Board >> moveAllShipsExcept: aShip by: aNumberOfLockers [
 	ships do: [ :ship | self move: ship by: aNumberOfLockers]
 ]
 
+{ #category : #moving }
+Board >> moveAllShipsExcept: aShip byParsecs: aNumberOfParsecs [ 
+		| ships |
+	ships := (positionOfShips collect: [ :positionOfShip | 
+		          positionOfShip ship ]) copyWithout: aShip.
+	ships do: [ :ship | self move: ship by: (aNumberOfParsecs  * boardDefinition distancePerLockerAsParsecs) floor ]
+]
+
 { #category : #private }
 Board >> moveAllToLockerZero [
 

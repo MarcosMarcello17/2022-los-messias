@@ -423,6 +423,82 @@ ZathuraTest >> testBlueShipThrowsAReversePolarityCardToReverseAtomicBombAndAtomi
 ]
 
 { #category : #'test-reversePolarityCard' }
+ZathuraTest >> testBlueShipThrowsAReversePolarityCardToReverseHyperJumpAndEveryShipMovesUpNParsecsExceptBlueShip [
+
+	| die ships zathura boardStructure sequence |
+	die := LoadedDie with: 1.
+	ships := OrderedCollection
+		         with: 'BlueShip'
+		         with: 'RedShip'
+		         with: 'GreenShip'.
+
+	sequence := { 
+		            (Parsec with: 25).
+		            (Parsec with: 31).
+		            (Parsec with: 11) }.
+	boardStructure := self
+		                  boardDefinitionWithOnly:
+		                  (HyperJumpEffect with: sequence)
+		                  at: 3
+		                  of: 10
+		                  andParsec: 100
+		                  played: 3.
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardStructure
+		           rolling: die
+		           withCards: { ReversePolarityCard new }.
+	zathura playTurn.
+	zathura playTurn.
+	zathura playTurn.
+	self assert: 'BlueShip' isAtLocker: 1 in: zathura.
+
+	self assert: 'RedShip' isAtLocker: 1 in: zathura.
+	self assert: 'GreenShip' isAtLocker: 1 in: zathura.
+	zathura throws: ReversePolarityCard new to: HyperJumpEffect new from: 'BlueShip'.
+	zathura playTurn.
+	self assert: 'BlueShip' isAtLocker: 2 in: zathura.
+	self assert: 'RedShip' isAtLocker: 4 in: zathura .
+	self assert: 'GreenShip' isAtLocker: 4 in: zathura .
+]
+
+{ #category : #'test-reversePolarityCard' }
+ZathuraTest >> testBlueShipThrowsAReversePolarityCardToReverseMoonwalkAndEveryShipMovesNLockersExceptBlueShip [
+
+	| die ships zathura boardStructure |
+	die := LoadedDie with: 3.
+	ships := OrderedCollection
+		         with: 'BlueShip'
+		         with: 'RedShip'
+		         with: 'GreenShip'.
+	boardStructure := self
+		                  boardDefinitionWithOnly: (MoonWalkEffect with: 2)
+		                  at: 7
+		                  of: 10
+		                  andParsec: 100
+		                  played: 3.
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardStructure
+		           rolling: die
+		           withCards: { ReversePolarityCard new }.
+	zathura playTurn.
+	zathura playTurn.
+	zathura playTurn.
+	self assert: 'BlueShip' isAtLocker: 3 in: zathura.
+	self assert: 'RedShip' isAtLocker: 3 in: zathura.
+	self assert: 'GreenShip' isAtLocker: 3 in: zathura.
+	zathura
+		throws: ReversePolarityCard new
+		to: MoonWalkEffect new
+		from: 'BlueShip'.
+	zathura playTurn .
+	self assert:'BlueShip' isAtLocker: 4 in: zathura. 
+		self assert: 'RedShip' isAtLocker: 3 in: zathura.
+	self assert: 'GreenShip' isAtLocker: 3 in: zathura.
+]
+
+{ #category : #'test-reversePolarityCard' }
 ZathuraTest >> testBlueShipThrowsAReversePolarityCardToReverseSpeedUpAndEveryShipMovesUp4LockersExceptBlueShip [
 
 	| die ships zathura boardStructure |

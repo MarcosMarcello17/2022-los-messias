@@ -48,7 +48,7 @@ MoonWalkEffect class >> with: aNumberOfLockers [
 { #category : #action }
 MoonWalkEffect >> applyFor: aShip on: aBoard [
 
-aBoard moveAllShipsBackwardsExcept: aShip by: lockers
+reverse == false ifTrue: [aBoard moveAllShipsBackwardsExcept: aShip by: lockers] ifFalse: [ aBoard move: aShip  by: (lockers * -1) ].
 ]
 
 { #category : #'class initialization' }
