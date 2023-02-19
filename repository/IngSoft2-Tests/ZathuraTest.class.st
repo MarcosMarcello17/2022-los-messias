@@ -422,6 +422,63 @@ ZathuraTest >> testBlueShipThrowsAReversePolarityCardToReverseAtomicBombAndAtomi
 		isAtLocker: 3 in: zathura .
 ]
 
+{ #category : #'test-reversePolarityCard' }
+ZathuraTest >> testBlueShipThrowsAReversePolarityCardToReverseSpeedUpAndEveryShipMovesUp4LockersExceptBlueShip [
+
+	| die ships zathura boardStructure |
+	die := LoadedDie with: 1.
+	ships := OrderedCollection with: 'BlueShip' with: 'RedShip'.
+	boardStructure := self
+		                  boardDefinitionWithOnly: SpeedUpEffect new
+		                  at: 3
+		                  of: 8
+		                  andParsec: 100
+		                  played: 3.
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardStructure
+		           rolling: die
+		           withCards: { ReversePolarityCard new }.
+	zathura playTurn.
+	zathura
+		throws: ReversePolarityCard new
+		to: SpeedUpEffect new
+		from: 'RedShip'.
+	zathura playTurn.
+	self assert: 'BlueShip' isAtLocker: 1 in: zathura.
+	self assert: 'RedShip' isAtLocker: 1 in: zathura.
+	zathura playTurn.
+	self assert: 'BlueShip' isAtLocker: 2 in: zathura.
+	self assert: 'RedShip' isAtLocker: 5 in: zathura.
+]
+
+{ #category : #'test-reversePolarityCard' }
+ZathuraTest >> testBlueShipThrowsAReversePolarityCardToReverseWormHoleAndAffectEveryShipExceptBlueShip [
+
+	| die ships zathura boardStructure |
+	die := LoadedDie with: 4.
+	ships := OrderedCollection with: 'BlueShip' with: 'RedShip'.
+	boardStructure := self
+		                  boardDefinitionWithOnly: WormHoleEffect new
+		                  at: 9
+		                  of: 9
+		                  andParsec: 100
+		                  played: 3.
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardStructure
+		           rolling: die
+		           withCards: { ReversePolarityCard new }.
+	zathura playTurn.
+	zathura playTurn.
+	self assert: 'BlueShip' isAtLocker: 4 in: zathura .
+	self assert: 'RedShip' isAtLocker: 4 in: zathura.
+	zathura throws: ReversePolarityCard new to: WormHoleEffect new from: 'BlueShip'.
+	zathura playTurn .
+	self assert: 'BlueShip' isAtLocker: 8 in: zathura .
+	self assert: 'RedShip' isAtLocker: 0 in: zathura . 
+]
+
 { #category : #'test-speedCard' }
 ZathuraTest >> testBlueShipThrowsASpeedCardToRedShipAndRedShipMovesRolledNumberPlusOneAllGame [
 
@@ -1350,6 +1407,34 @@ ZathuraTest >> testShipsFallIntoAHyperJumpLockerAndMovesByTheParsecsInASequence 
 		isAt: 2
 		with: 0
 		in: zathura
+]
+
+{ #category : #'test-sprintEffect' }
+ZathuraTest >> testShipsFallIntoASprintLockerAndDoesntMoveBecauseItHasNoCards [
+
+	| die ships zathura boardStructure |
+	die := LoadedDie with: 1.
+	ships := OrderedCollection
+		         with: 'BlueShip'
+		         with: 'RedShip'
+		         with: 'GreenShip'.
+
+	boardStructure := self
+		                  boardDefinitionWithOnly:
+		                  (SprintEffect new)
+		                  at: 2
+		                  of: 10
+		                  andParsec: 100
+		                  played: 3.
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardStructure
+		           rolling: die
+		           withCards: {OverloadCard new}.
+	zathura throws: OverloadCard new to: 'RedShip' from: 'BlueShip'.
+	zathura throws: OverloadCard new to: 'GreenShip' from: 'BlueShip'.
+	zathura playTurn.
+	self assert: 'BlueShip' isAtLocker: 1 in: zathura .
 ]
 
 { #category : #'test-sprintEffect' }

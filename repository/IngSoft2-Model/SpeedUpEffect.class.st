@@ -29,5 +29,5 @@ Class {
 { #category : #action }
 SpeedUpEffect >> applyFor: aShip on: aBoard [
 
-	aBoard move: aShip by: 4.
+	reverse == false ifTrue: [aBoard move: aShip by: 4.] ifFalse: [ aBoard moveAllShipsExcept: aShip  by: 4 ].
 ]

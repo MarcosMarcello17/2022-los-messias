@@ -143,6 +143,14 @@ Board >> moveAllShipsBackwardsExcept: aShip by: aNumberOfLockers [
 	ships do: [ :ship | self move: ship by: aNumberOfLockers * -1 ]
 ]
 
+{ #category : #moving }
+Board >> moveAllShipsExcept: aShip by: aNumberOfLockers [ 
+	| ships |
+	ships := (positionOfShips collect: [ :positionOfShip | 
+		          positionOfShip ship ]) copyWithout: aShip.
+	ships do: [ :ship | self move: ship by: aNumberOfLockers]
+]
+
 { #category : #private }
 Board >> moveAllToLockerZero [
 
