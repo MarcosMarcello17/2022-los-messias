@@ -44,11 +44,11 @@ ProbabilityDistributionTest >> testProbabilityDistributionReceivesACollectionWit
 ProbabilityDistributionTest >> testProbabilityDistributionThrowsErrorWhenIsIitializedWithASumOfValuesDifferentOfAHundred [
 
 	self
-		should: [ ProbabilityDistribution with: { 
+		should: [ 
+			ProbabilityDistribution with: { 
 					(ProbabilityPoint initializeEvent: 'a' withProbability: 10).
-					(ProbabilityPoint initializeEvent: 'b' withProbability: 89) }]
-		raise: Error
-		withMessage: 'The sum of the probabilities must be 100%'
+					(ProbabilityPoint initializeEvent: 'b' withProbability: 89) } ]
+		raiseErrorWithMessage: 'The sum of the probabilities must be 100%'
 ]
 
 { #category : #tests }
@@ -56,7 +56,5 @@ ProbabilityDistributionTest >> testProbabilityDistributionThrowsErrorWhenIsIitia
 
 	self
 		should: [ ProbabilityDistribution with: {  } ]
-		raise: Error
-		withMessage:
-		'There must be at least one point'
+		raiseErrorWithMessage: 'There must be at least one point'
 ]

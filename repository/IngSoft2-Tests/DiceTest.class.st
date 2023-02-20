@@ -21,8 +21,8 @@ DiceTest >> testDiceCupThrowsErrorWhenInitializedWithNoDie [
 
 	self
 		should: [ DiceCup withAll: {  } ]
-		raise: Error
-		withMessage: 'Dice Cup should be initialized with at least one die'
+		raiseErrorWithMessage:
+		'Dice Cup should be initialized with at least one die'
 ]
 
 { #category : #'tests - LoadedDie' }
@@ -30,8 +30,8 @@ DiceTest >> testLoadedDieCannotBeLoadedWithResultLowerThanOne [
 
 	self
 		should: [ LoadedDie with: 0 ]
-		raise: Error
-		withMessage: 'Die should be loaded with number greater than 0'
+		raiseErrorWithMessage:
+		'Die should be loaded with number greater than 0'
 ]
 
 { #category : #'tests - LoadedDie' }
@@ -48,8 +48,7 @@ DiceTest >> testRandomDieCannotBeCreatedWithNumberOfFacesSmallerThanThree [
 
 	self
 		should: [ RandomDie with: 2 ]
-		raise: Error
-		withMessage:
+		raiseErrorWithMessage:
 		'Die cannot be created with a number of faces smaller than 3'
 ]
 
@@ -69,8 +68,7 @@ DiceTest >> testSequencialLoadedDieCannotBeLoadedWithAnEmptyCollection [
 
 	self
 		should: [ SequencialLoadedDie with: #( 2 ) ]
-		raise: Error
-		withMessage:
+		raiseErrorWithMessage:
 		'Sequential die should be loaded with more than one number'
 ]
 

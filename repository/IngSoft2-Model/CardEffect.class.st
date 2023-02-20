@@ -29,5 +29,5 @@ Class {
 { #category : #action }
 CardEffect >> applyFor: aShip on: aBoard [
 
-	aBoard giveCardTo: aShip
+	reverse not ifTrue: [ aBoard giveCardTo: aShip  ] ifFalse: [ aBoard giveCardToEveryoneExcept: aShip  ].
 ]

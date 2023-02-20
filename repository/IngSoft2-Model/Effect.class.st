@@ -49,5 +49,5 @@ reverse := false.
 { #category : #private }
 Effect >> reverse [
 
-	reverse == false ifTrue: [ reverse := true ] ifFalse: [ reverse := false ]. 
+	reverse := reverse not.
 ]

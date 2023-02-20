@@ -54,7 +54,11 @@ HyperJumpEffect >> applyFor: aShip on: aBoard [
 
 	| parsecs |
 	parsecs := parsecsSequence next.
-	reverse == false ifTrue: [aBoard move: aShip byParsecs: (parsecs valueAsParsec)] ifFalse: [ aBoard moveAllShipsExcept: aShip  byParsecs: (parsecs valueAsParsec ) ].
+	reverse not
+		ifTrue: [ 
+			aBoard move: aShip byParsecs: parsecs valueAsParsec ]
+		ifFalse: [ 
+		aBoard moveAllShipsExcept: aShip byParsecs: parsecs valueAsParsec ]
 ]
 
 { #category : #initialization }

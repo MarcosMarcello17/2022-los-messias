@@ -7,5 +7,5 @@ Class {
 { #category : #action }
 SprintEffect >> applyFor: aShip on: aBoard [
 
-	aBoard moveByNumberOfCards: aShip.
+	reverse not ifTrue: [ aBoard moveByNumberOfCards: aShip ] ifFalse: [aBoard moveAllByNumberOfCardsExcept: aShip].
 ]

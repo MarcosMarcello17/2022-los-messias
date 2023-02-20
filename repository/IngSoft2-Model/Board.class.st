@@ -96,6 +96,14 @@ Board >> giveCardTo: aShip [
 	cardManager addTheNextCardToHandCardOf: aShip
 ]
 
+{ #category : #giving }
+Board >> giveCardToEveryoneExcept: aShip [
+	| ships |
+	ships := (positionOfShips collect: [ :positionOfShip | 
+		          positionOfShip ship ]) copyWithout: aShip.
+	ships do: [ :ship | self giveCardTo: ship ]
+]
+
 { #category : #moving }
 Board >> hasCrossFinishLine: aShip [
 
@@ -132,6 +140,14 @@ Board >> move: aShip byParsecs: numberOfParsecs [
 	self
 		move: aShip
 		by: (numberOfParsecs * boardDefinition distancePerLockerAsParsecs ) floor.
+]
+
+{ #category : #moving }
+Board >> moveAllByNumberOfCardsExcept: aShip [ 
+		| ships |
+	ships := (positionOfShips collect: [ :positionOfShip | 
+		          positionOfShip ship ]) copyWithout: aShip.
+	ships do: [ :ship | self moveByNumberOfCards: ship  ].
 ]
 
 { #category : #private }
