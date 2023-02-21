@@ -48,7 +48,7 @@ Parsec >> value [
 	^parsecs.
 ]
 
-{ #category : #accessing }
+{ #category : #converting }
 Parsec >> valueAsParsec [
 	^ parsecs
 ]

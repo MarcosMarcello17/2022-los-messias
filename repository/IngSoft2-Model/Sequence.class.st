@@ -32,7 +32,7 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #'class initialization' }
+{ #category : #'instance creation' }
 Sequence class >> newEmpty [
 	^ self new initializeWith: {  }
 ]
@@ -70,7 +70,7 @@ Sequence >> initializeWith: aCollection [
 	aCollection do: [ :element | collection add: element ]
 ]
 
-{ #category : #actions }
+{ #category : #private }
 Sequence >> next [
 
 	| aValue |

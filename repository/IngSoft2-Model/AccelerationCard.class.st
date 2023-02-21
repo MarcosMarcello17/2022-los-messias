@@ -1,3 +1,9 @@
+"
+Implementation Of Acceleration Card
+
+● Carta Permanente
+● Incrementa en 1 la tirada total de todos las naves.
+"
 Class {
 	#name : #AccelerationCard,
 	#superclass : #Object,
@@ -10,7 +16,7 @@ AccelerationCard >> = aCard [
 ^(self class == aCard class).
 ]
 
-{ #category : #action }
+{ #category : #private }
 AccelerationCard >> applyEffectToAllShipsOn: aZathuraGame by: sourceShip [
 
 	self assertIsYourTurn: sourceShip in: aZathuraGame .

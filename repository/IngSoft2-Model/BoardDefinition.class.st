@@ -66,21 +66,43 @@ BoardDefinition class >> with: lockers and: unit played: laps [
 	^ self new initializeWith: lockers and: unit played: laps
 ]
 
-{ #category : #asserting }
-BoardDefinition >> assertBoardHasLockerOf: aClass [ 
-	self shouldBeImplemented.
-]
-
 { #category : #accessing }
 BoardDefinition >> distancePerLockerAsParsecs [
 
 	^ (lockers size / distance valueAsParsec ) asFloat
 ]
 
-{ #category : #accessing }
-BoardDefinition >> findALockerOf: anEffect [ 
-	^(lockers  select: [ :eff | eff = anEffect  ]) first
-	
+{ #category : #'finding/searching' }
+BoardDefinition >> findALockerOf: anEffect before: aNumberOfLocker [
+
+
+	| lockerWithEffect |
+	lockerWithEffect := self findLockerWith: anEffect  between: 1 and: aNumberOfLocker .
+	lockerWithEffect isEmpty
+		ifFalse: [ ^ lockerWithEffect first ]
+		ifTrue: [ Error signal: 'Effect not in Board' ]
+]
+
+{ #category : #'finding/searching' }
+BoardDefinition >> findALockerOf: anEffect closerTo: aNumberOfLocker [
+
+	| lockerWithEffect |
+	lockerWithEffect := self
+		                    findLockerWith: anEffect
+		                    between: aNumberOfLocker
+		                    and: lockers size.
+	lockerWithEffect isEmpty
+		ifFalse: [ ^ lockerWithEffect first ]
+		ifTrue: [^(self findALockerOf: anEffect before: aNumberOfLocker )]
+]
+
+{ #category : #'finding/searching' }
+BoardDefinition >> findLockerWith: anEffect between: aNumberOfLocker and: end [
+
+	| nextLockers lockerWithEffect |
+	nextLockers := lockers copyFrom: aNumberOfLocker + 1 to: end.
+	lockerWithEffect := nextLockers select: [ :eff | eff = anEffect ].
+	^ lockerWithEffect
 ]
 
 { #category : #initialization }

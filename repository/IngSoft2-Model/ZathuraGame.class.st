@@ -60,12 +60,12 @@ ZathuraGame class >> playBy: ships movedInBoardOf: boardStructure rolling: die w
 		  withCards: cards
 ]
 
-{ #category : #actions }
+{ #category : #private }
 ZathuraGame >> addCardToTable: aCard [ 
 	cardManager addCardToTable: aCard.
 ]
 
-{ #category : #actions }
+{ #category : #private }
 ZathuraGame >> applyLastEffectOn: aShip with: aRepeatCard [
 
 	board applyLastEffectOn: aShip.
@@ -93,12 +93,12 @@ ZathuraGame >> checkIfWon: aShip [
 	finished := true
 ]
 
-{ #category : #accessing }
+{ #category : #private }
 ZathuraGame >> getNumberOfCardsOf: aShip [ 
 	^(cardHands cardHandOf: aShip) sizeOfCardHand.
 ]
 
-{ #category : #actions }
+{ #category : #private }
 ZathuraGame >> giveCardTo: aShip [ 
 	cardHands giveCard: (cardManager giveCard ) to: aShip.
 ]
@@ -109,11 +109,11 @@ ZathuraGame >> hasFinished [
 	^ finished
 ]
 
-{ #category : #initalization }
+{ #category : #initialization }
 ZathuraGame >> initializePlayingBy: aCollectionOfShips movedInBoardOf: boardStructure rolling: aDiceCup withCards: aCollectionOfCards [
 
 	diceCup := aDiceCup.
-	cardManager := CardsInZathura
+	cardManager := CardOrganizer
 		               with: aCollectionOfShips
 		               and: aCollectionOfCards
 		               from: self.
@@ -179,37 +179,22 @@ ZathuraGame >> rankingOf: aShip [
 	^ board rankingOf: aShip.
 ]
 
-{ #category : #actions }
+{ #category : #private }
 ZathuraGame >> removeFromCardsOnTable: aCard with: aCancellationCard [ 
 	cardManager removeFromCardsOnTable: aCard with: aCancellationCard 
 ]
 
-{ #category : #'accessing - private' }
-ZathuraGame >> reverseEffectOf: anEffect [ 
-	board reverseEffectOf: anEffect .
+{ #category : #private }
+ZathuraGame >> reverseEffectOf: anEffect by: aShip [ 
+	board reverseEffectOf: anEffect by: aShip.
 ]
 
-{ #category : #'accessing - attributes' }
+{ #category : #accessing }
 ZathuraGame >> ships [
 	| nameShips |
 	nameShips := OrderedCollection new.
 	ships do: [ :aShip | nameShips add: aShip ].
 	^nameShips.
-]
-
-{ #category : #throwing }
-ZathuraGame >> throw: aReversePolarityCard from: aShip to: anEffect [ 
-	cardThrower throws: aReversePolarityCard  from: aShip to: anEffect .
-]
-
-{ #category : #throwing }
-ZathuraGame >> throw: aReversePolarityCard to: aLockerEffect [ 
-	cardThrower throw: aReversePolarityCard  to: aLockerEffect  on: self. 
-]
-
-{ #category : #throwing }
-ZathuraGame >> throw: aReversePolarityCard to: aClass on: aZathuraGame [ 
-	self shouldBeImplemented.
 ]
 
 { #category : #'card - actions' }

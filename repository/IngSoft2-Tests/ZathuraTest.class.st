@@ -67,6 +67,45 @@ ZathuraTest >> boardDefinitionWithOnly: effect at: effectLockerNumber of: number
 	^ BoardDefinition with: lockers and: (Parsec with: parsec) played: laps
 ]
 
+{ #category : #'test-reversePolarityCard' }
+ZathuraTest >> testBlueShipAndRedShipThrowAReversePolarityCardToAtomicBombAndAtomicBombDontReverse [
+
+	| die ships zathura boardDefinition |
+	die := LoadedDie with: 3.
+	ships := OrderedCollection
+		         with: 'BlueShip'
+		         with: 'RedShip'
+		         with: 'GreenShip'.
+
+	boardDefinition := self
+		                   boardDefinitionWithOnly: AtomicBombEffect new
+		                   at: 7
+		                   of: 10
+		                   andParsec: 50
+		                   played: 3.
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardDefinition
+		           rolling: die
+		           withCards:
+		           { (ReversePolarityCard new) }.
+	zathura
+		throws: ReversePolarityCard new
+		to: AtomicBombEffect new
+		from: 'BlueShip'.
+	zathura playTurn.
+	zathura
+		throws: ReversePolarityCard new
+		to: AtomicBombEffect new
+		from: 'RedShip'.
+	zathura playTurn.
+	zathura playTurn.
+	zathura playTurn.
+	self assert: 'BlueShip' isAtLocker: 0 in: zathura.
+	self assert: 'RedShip' isAtLocker: 0 in: zathura.
+	self assert: 'GreenShip' isAtLocker: 0 in: zathura
+]
+
 { #category : #'test-cancellationCard' }
 ZathuraTest >> testBlueShipCantThrowCancellationCardIfNoCardsHaveBeenPlayed [
 
@@ -403,20 +442,19 @@ ZathuraTest >> testBlueShipThrowsAReversePolarityCardToReverseAtomicBombAndAtomi
 		           playBy: ships
 		           movedInBoardOf: boardDefinition
 		           rolling: die
-		           withCards: { ReversePolarityCard to: AtomicBombEffect new. }.
-		zathura throws: ReversePolarityCard new to: AtomicBombEffect new from: 'BlueShip'.
+		           withCards:
+		           { (ReversePolarityCard new) }.
+	zathura
+		throws: ReversePolarityCard new
+		to: AtomicBombEffect new
+		from: 'BlueShip'.
 	zathura playTurn.
 	zathura playTurn.
 	zathura playTurn.
 	zathura playTurn.
-	self
-		assert: 'BlueShip' isAtLocker: 6 in: zathura.
-	self
-		assert: 'RedShip'
-		isAtLocker: 3 in: zathura .
-	self
-		assert: 'GreenShip'
-		isAtLocker: 3 in: zathura .
+	self assert: 'BlueShip' isAtLocker: 6 in: zathura.
+	self assert: 'RedShip' isAtLocker: 3 in: zathura.
+	self assert: 'GreenShip' isAtLocker: 3 in: zathura
 ]
 
 { #category : #'test-reversePolarityCard' }
@@ -937,7 +975,7 @@ ZathuraTest >> testBlueShipThrowsErrorWhenUsesAnSpeedCardAndItIsNotItsTurn [
 
 	| die ships boardStructure zathura |
 	die := LoadedDie with: 7.
-	ships := #( 'BlueShip' 'RedShip' ).
+	ships := OrderedCollection with: 'BlueShip' with: 'RedShip'.
 	boardStructure := self
 		                  boardDefinitionWithNoEffectsOf: 10
 		                  andParsec: 100
@@ -1362,6 +1400,105 @@ ZathuraTest >> testRedoCardThrowsErrorWhenBlueShipThrowsItBeforeAnyOtherCardHasB
 		zathura throws: RedoCard new to: 'RedShip' from: 'RedShip' ]
 		raiseErrorWithMessage:
 		'Redo card must be thrown before another card has been played'
+]
+
+{ #category : #'test-reversePolarityCard' }
+ZathuraTest >> testReversePolarityCardOnlyAffectsClosestLockerFromShip [
+
+	| die ships zathura boardStructure |
+	die := SequencialLoadedDie with: { 5. 1. 1 }.
+	ships := OrderedCollection
+		         with: 'BlueShip'
+		         with: 'RedShip'
+		         with: 'GreenShip'.
+
+	boardStructure := self
+		                  boardDefinitionWithOnly: SprintEffect new
+		                  at: 3
+		                  of: 15
+		                  andParsec: 100
+		                  played: 2.
+
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardStructure
+		           rolling: die
+		           withCards: { ReversePolarityCard new }.
+	zathura playTurn.
+	zathura playTurn.
+	zathura playTurn.
+	zathura
+		throws: ReversePolarityCard new
+		to: SprintEffect new
+		from: 'BlueShip'.
+	zathura playTurn.
+	zathura playTurn.
+	self assert: 'BlueShip' isAtLocker: 11 in: zathura.
+	self assert: 'RedShip' isAtLocker: 2 in: zathura .
+	self assert: 'GreenShip' isAtLocker: 3 in: zathura.
+]
+
+{ #category : #'test-reversePolarityCard' }
+ZathuraTest >> testReversePolarityCardOnlyAffectsOneLocker [
+
+	| die ships zathura boardStructure lockers |
+	die := LoadedDie with: 1.
+	ships := OrderedCollection
+		         with: 'BlueShip'
+		         with: 'RedShip'
+		         with: 'GreenShip'.
+
+	lockers := OrderedCollection new.
+	1 to: 10 do: [ :number | lockers add: LockerNoEffect new ].
+	lockers at: 2 put: SprintEffect new.
+	lockers at: 4 put: SprintEffect new.
+
+	boardStructure := BoardDefinition
+		                  with: lockers
+		                  and: (Parsec with: 100)
+		                  played: 1.
+
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardStructure
+		           rolling: die
+		           withCards: { ReversePolarityCard new }.
+	zathura
+		throws: ReversePolarityCard new
+		to: SprintEffect new
+		from: 'BlueShip'.
+	zathura playTurn.
+	self assert: 'BlueShip' isAtLocker: 1 in: zathura.
+	self assert: 'RedShip' isAtLocker: 2 in: zathura.
+	self assert: 'GreenShip' isAtLocker: 2 in: zathura.
+	zathura throws: ReversePolarityCard new to: SprintEffect new from: 'RedShip'.
+	zathura playTurn .
+	self assert: 'BlueShip' isAtLocker: 2 in: zathura.
+	self assert: 'RedShip' isAtLocker: 3 in: zathura .
+	self assert: 'GreenShip' isAtLocker: 4 in: zathura.
+]
+
+{ #category : #'test-reversePolarityCard' }
+ZathuraTest >> testReversePolarityCardThrowsErrorWhenTryingToReverseAnEffectNotInTable [
+
+	| die ships zathura boardStructure |
+	die := LoadedDie with: 1.
+	ships := OrderedCollection
+		         with: 'BlueShip'
+		         with: 'RedShip'
+		         with: 'GreenShip'.
+
+	boardStructure := self
+		                  boardDefinitionWithNoEffectsOf: 10
+		                  andParsec: 100
+		                  played: 1.
+
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardStructure
+		           rolling: die
+		           withCards: { ReversePolarityCard new }.
+	self should: [ zathura throws: ReversePolarityCard new to: AtomicBombEffect new from:  'BlueShip'] raiseErrorWithMessage: 'Effect not in Board'.
 ]
 
 { #category : #'test-cancellationCard' }

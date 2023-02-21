@@ -1,3 +1,16 @@
+"
+Please comment me using the following template inspired by Class Responsibility Collaborator (CRC) design:
+
+For the Class part:  State a one line summary. For example, ""I represent a paragraph of text"".
+
+For the Responsibility part: Three sentences about my main responsibilities - what I do, what I know.
+
+For the Collaborators Part: State my main collaborators and one line about how I interact with them. 
+
+Public API and Key Messages
+
+Implementada para manejar la logica del tirado de cartas en el juego
+"
 Class {
 	#name : #CardThrower,
 	#superclass : #Object,
@@ -21,11 +34,6 @@ CardThrower >> createNewWith: aGroupOfCardHands in: aZathuraGame [
 ]
 
 { #category : #throwing }
-CardThrower >> throw: aReversePolarityCard to: aClass on: aZathuraGame [ 
-	self shouldBeImplemented.
-]
-
-{ #category : #throwin }
 CardThrower >> throw: aCancellationCard to: destinationShip removing: aCard from: sourceShip [ 
 	(cardHands cardHandOf: sourceShip)
 		throw: aCancellationCard
@@ -35,10 +43,11 @@ CardThrower >> throw: aCancellationCard to: destinationShip removing: aCard from
 ]
 
 { #category : #throwing }
-CardThrower >> throw: anAccelerationCard toAllShipsFrom: aShip [ 
-	| cardHand |
-	cardHand := cardHands cardHandOf: aShip.
-	cardHand throw: anAccelerationCard toAllShipsOn: zathura.
+CardThrower >> throw: anAccelerationCard toAllShipsFrom: aShip [
+
+	(cardHands cardHandOf: aShip)
+		throw: anAccelerationCard
+		toAllShipsOn: zathura
 ]
 
 { #category : #throwing }
@@ -50,8 +59,10 @@ CardThrower >> throws: aCancellationCard removing: aCard from: sourceShip [
 ]
 
 { #category : #throwing }
-CardThrower >> throws: aCard to: destinationShip from: sourceShip [ 
-	| cardHand |
-	cardHand := cardHands cardHandOf: sourceShip.
-	cardHand throw: aCard to: destinationShip on: zathura .
+CardThrower >> throws: aCard to: destinationShip from: sourceShip [
+
+	(cardHands cardHandOf: sourceShip)
+		throw: aCard
+		to: destinationShip
+		on: zathura
 ]
