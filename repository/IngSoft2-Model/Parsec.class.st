@@ -42,13 +42,13 @@ Parsec >> initializeWith: parsec [
 	parsecs := parsec
 ]
 
-{ #category : #evaluating }
+{ #category : #accessing }
 Parsec >> value [
 
 	^parsecs.
 ]
 
-{ #category : #accessing }
+{ #category : #converting }
 Parsec >> valueAsParsec [
 	^ parsecs
 ]

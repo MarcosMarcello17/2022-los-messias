@@ -53,16 +53,18 @@ HyperJumpEffect class >> with: parsecSequence [
 HyperJumpEffect >> applyFor: aShip on: aBoard [
 
 	| parsecs |
-	parsecs := parsecsSequence next.
-	aBoard move: aShip byParsecs: (parsecs valueAsParsec)
+	parsecs := (parsecsSequence next) valueAsParsec .
+	reverse not
+		ifTrue: [ aBoard move: aShip byParsecs: parsecs ]
+		ifFalse: [ 
+		aBoard moveAllShipsExcept: aShip byParsecs: parsecs]
 ]
 
 { #category : #initialization }
 HyperJumpEffect >> initializeWith: aCollectionOfNumbers [
 
-	parsecsSequence := aCollectionOfNumbers
-		                                asOrderedCollection asSequence.
+	parsecsSequence := aCollectionOfNumbers asOrderedCollection
+		                   asSequence.
 	parsecsSequence sort: [ :positionA :positionB | 
-		positionA valueAsParsec > positionB valueAsParsec ].
-
+		positionA valueAsParsec > positionB valueAsParsec ]
 ]

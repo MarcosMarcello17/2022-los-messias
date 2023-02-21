@@ -23,6 +23,9 @@ Internal Representation and Key Implementation Points.
 Class {
 	#name : #Effect,
 	#superclass : #Object,
+	#instVars : [
+		'reverse'
+	],
 	#category : #'IngSoft2-Model'
 }
 
@@ -35,4 +38,16 @@ Effect >> = anEffect [
 { #category : #action }
 Effect >> applyFor: aShip on: aBoard [ 
 	^ self subclassResponsibility
+]
+
+{ #category : #initialization }
+Effect >> initialize [ 
+
+reverse := false.
+]
+
+{ #category : #private }
+Effect >> reverse [
+
+	reverse := reverse not.
 ]

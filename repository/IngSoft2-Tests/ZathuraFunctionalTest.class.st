@@ -13,23 +13,38 @@ ZathuraFunctionalTest >> boardDefinitionWithRandomEffects [
 		            (Parsec with: 4).
 		            (Parsec with: 8) }.
 	points := { 
-		          (ProbabilityPoint initializeEvent: LockerNoEffect new withProbability: 20).
-		(ProbabilityPoint initializeEvent: SprintEffect new withProbability: 10).
-		          (ProbabilityPoint initializeEvent: AtomicBombEffect new withProbability: 2).
+		          (ProbabilityPoint
+			           initializeEvent: LockerNoEffect new
+			           withProbability: 10).
+			(ProbabilityPoint initializeEvent: SprintEffect new withProbability: 10).
+		          (ProbabilityPoint
+			           initializeEvent: SprintEffect new
+			           withProbability: 10).
+		          (ProbabilityPoint
+			           initializeEvent: AtomicBombEffect new
+			           withProbability: 2).
 		          (ProbabilityPoint
 			           initializeEvent: (HyperJumpEffect with: sequence)
 			           withProbability: 8).
 		          (ProbabilityPoint
 			           initializeEvent: (MoonWalkEffect with: 10)
 			           withProbability: 10).
-		          (ProbabilityPoint initializeEvent: SpeedUpEffect new withProbability: 20).
-		          (ProbabilityPoint initializeEvent: WormHoleEffect new withProbability: 20).
-		          (ProbabilityPoint initializeEvent: CardEffect new withProbability: 10) }.
+		          (ProbabilityPoint
+			           initializeEvent: SpeedUpEffect new
+			           withProbability: 20).
+		          (ProbabilityPoint
+			           initializeEvent: WormHoleEffect new
+			           withProbability: 20).
+		          (ProbabilityPoint
+			           initializeEvent: CardEffect new
+			           withProbability: 10) }.
 
 	probabilityDistribution := ProbabilityDistribution with: points.
-	boardDefinition := BoardDefinition with:
-		                    ((RandomGenerator distributedBy:
-			                     probabilityDistribution) generateRandomObjectsWith: 10)
+	boardDefinition := BoardDefinition
+		                   with:
+			                   ((RandomGenerator distributedBy:
+				                     probabilityDistribution) 
+				                    generateRandomObjectsWith: 10)
 		                   and: (Parsec with: 50)
 		                   played: 3.
 	^ boardDefinition

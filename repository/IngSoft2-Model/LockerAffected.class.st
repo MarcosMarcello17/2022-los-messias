@@ -9,27 +9,35 @@ For the Collaborators Part: State my main collaborators and one line about how I
 
 Public API and Key Messages
 
-Guarda un valor en una medida para que sea facilmente convertible
+- Almacena la informacion sobre un locker afectado
 "
 Class {
-	#name : #UnitMeasure,
+	#name : #LockerAffected,
 	#superclass : #Object,
+	#instVars : [
+		'effect',
+		'position'
+	],
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #initialization }
-UnitMeasure >> initializeWith: value [ 
-	self subclassResponsibility
+{ #category : #'class initialization' }
+LockerAffected class >> with: anEffect at: aPosition [ 
+	^self new initializeWith: anEffect at: aPosition.
 ]
 
 { #category : #accessing }
-UnitMeasure >> value [
-
-self subclassResponsibility .
+LockerAffected >> effect [
+	^ effect
 ]
 
-{ #category : #converting }
-UnitMeasure >> valueAsParsec [
+{ #category : #initialization }
+LockerAffected >> initializeWith: anEffect at: aPosition [ 
+	effect:= anEffect .
+	position := aPosition 
+]
 
-	self subclassResponsibility
+{ #category : #accessing }
+LockerAffected >> position [
+	^ position
 ]

@@ -29,5 +29,7 @@ Class {
 { #category : #action }
 WormHoleEffect >> applyFor: aShip on: aBoard [
 
-	aBoard move: aShip by: -4
+	reverse not
+		ifTrue: [ aBoard move: aShip by: -4 ]
+		ifFalse: [ aBoard moveAllShipsBackwardsExcept: aShip by: 4 ]
 ]

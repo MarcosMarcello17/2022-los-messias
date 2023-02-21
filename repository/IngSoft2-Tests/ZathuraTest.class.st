@@ -67,10 +67,49 @@ ZathuraTest >> boardDefinitionWithOnly: effect at: effectLockerNumber of: number
 	^ BoardDefinition with: lockers and: (Parsec with: parsec) played: laps
 ]
 
+{ #category : #'test-reversePolarityCard' }
+ZathuraTest >> testBlueShipAndRedShipThrowAReversePolarityCardToAtomicBombAndAtomicBombDontReverse [
+
+	| die ships zathura boardDefinition |
+	die := LoadedDie with: 3.
+	ships := OrderedCollection
+		         with: 'BlueShip'
+		         with: 'RedShip'
+		         with: 'GreenShip'.
+
+	boardDefinition := self
+		                   boardDefinitionWithOnly: AtomicBombEffect new
+		                   at: 7
+		                   of: 10
+		                   andParsec: 50
+		                   played: 3.
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardDefinition
+		           rolling: die
+		           withCards:
+		           { (ReversePolarityCard new) }.
+	zathura
+		throws: ReversePolarityCard new
+		to: AtomicBombEffect new
+		from: 'BlueShip'.
+	zathura playTurn.
+	zathura
+		throws: ReversePolarityCard new
+		to: AtomicBombEffect new
+		from: 'RedShip'.
+	zathura playTurn.
+	zathura playTurn.
+	zathura playTurn.
+	self assert: 'BlueShip' isAtLocker: 0 in: zathura.
+	self assert: 'RedShip' isAtLocker: 0 in: zathura.
+	self assert: 'GreenShip' isAtLocker: 0 in: zathura
+]
+
 { #category : #'test-cancellationCard' }
 ZathuraTest >> testBlueShipCantThrowCancellationCardIfNoCardsHaveBeenPlayed [
 
-	| diceCup zathura  |
+	| diceCup zathura |
 	diceCup := DiceCup withAll: { 
 			           (LoadedDie with: 3).
 			           (LoadedDie with: 4) }.
@@ -92,14 +131,13 @@ ZathuraTest >> testBlueShipCantThrowCancellationCardIfNoCardsHaveBeenPlayed [
 				to: 'RedShip'
 				removing: OverloadCard new
 				from: 'BlueShip' ]
-		raise: Error
-		withMessage: 'This card is not active in the table'
+		raiseErrorWithMessage: 'This card is not active in the table'
 ]
 
 { #category : #'test-cancellationCard' }
 ZathuraTest >> testBlueShipCantThrowCancellationCardToOverloadCardIfNoOverloadCardsHaveBeenPlayed [
 
-	| diceCup zathura  |
+	| diceCup zathura |
 	diceCup := DiceCup withAll: { 
 			           (LoadedDie with: 3).
 			           (LoadedDie with: 4) }.
@@ -122,14 +160,13 @@ ZathuraTest >> testBlueShipCantThrowCancellationCardToOverloadCardIfNoOverloadCa
 				to: 'RedShip'
 				removing: OverloadCard new
 				from: 'BlueShip' ]
-		raise: Error
-		withMessage: 'This card is not active in the table'
+		raiseErrorWithMessage: 'This card is not active in the table'
 ]
 
 { #category : #'test-shipWithHandOfCards' }
 ZathuraTest >> testBlueShipCantThrowOverloadCardIfNotInHand [
 
-	| zathura aDie  |
+	| zathura aDie |
 	aDie := LoadedDie with: 1.
 	zathura := ZathuraGame
 		           playBy: { 'BlueShip'. 'RedShip' }
@@ -143,8 +180,31 @@ ZathuraTest >> testBlueShipCantThrowOverloadCardIfNotInHand [
 	self
 		should: [ 
 		zathura throws: OverloadCard new to: 'RedShip' from: 'BlueShip' ]
-		raise: Error
-		withMessage: 'Card is not in Hand'
+		raiseErrorWithMessage: 'Card is not in Hand'
+]
+
+{ #category : #'test-reversePolarityCard' }
+ZathuraTest >> testBlueShipCantThrowReversePolarityCardIfItsNotItsTurn [
+
+	| die ships zathura boardStructure |
+	die := LoadedDie with: 4.
+	ships := OrderedCollection with: 'BlueShip' with: 'RedShip'.
+	boardStructure := self
+		                  boardDefinitionWithOnly: WormHoleEffect new
+		                  at: 9
+		                  of: 9
+		                  andParsec: 100
+		                  played: 3.
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardStructure
+		           rolling: die
+		           withCards: { ReversePolarityCard new }.
+	zathura playTurn.
+	self should: [zathura
+		throws: ReversePolarityCard new
+		to: WormHoleEffect new
+		from: 'BlueShip'.] raiseErrorWithMessage: 'Permanent cards can only be used when its your turn'.
 ]
 
 { #category : #'test-board' }
@@ -316,7 +376,7 @@ ZathuraTest >> testBlueShipThrowsARedoCardAfterARepeatCardHasBeenPlayed [
 { #category : #'test-redoCard' }
 ZathuraTest >> testBlueShipThrowsARedoCardToAPermanentCardWhenItsNotHisTurn [
 
-	| diceCup zathura  |
+	| diceCup zathura |
 	diceCup := DiceCup withAll: { 
 			           (LoadedDie with: 3).
 			           (LoadedDie with: 4) }.
@@ -337,8 +397,8 @@ ZathuraTest >> testBlueShipThrowsARedoCardToAPermanentCardWhenItsNotHisTurn [
 	self
 		should: [ 
 		zathura throws: RedoCard new to: 'BlueShip' from: 'GreenShip' ]
-		raise: Error
-		withMessage: 'Permanent cards can only be used when its your turn'
+		raiseErrorWithMessage:
+		'Permanent cards can only be used when its your turn'
 ]
 
 { #category : #'test-redoCard' }
@@ -384,6 +444,252 @@ ZathuraTest >> testBlueShipThrowsARedoCardToRepeatAnotherRedoCardThrownToASpeedC
 		isAt: 8
 		with: 0
 		in: zathura
+]
+
+{ #category : #'test-reversePolarityCard' }
+ZathuraTest >> testBlueShipThrowsAReversePolarityCardToAtomicBombAndRedShipThrowsACancellationCardToReversePolartiyAndAtomicBombIsntAffected [
+
+	| die ships zathura boardDefinition |
+	die := LoadedDie with: 3.
+	ships := OrderedCollection
+		         with: 'BlueShip'
+		         with: 'RedShip'
+		         with: 'GreenShip'.
+
+	boardDefinition := self
+		                   boardDefinitionWithOnly: AtomicBombEffect new
+		                   at: 7
+		                   of: 10
+		                   andParsec: 50
+		                   played: 3.
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardDefinition
+		           rolling: die
+		           withCards: { 
+				           ReversePolarityCard new.
+				           CancellationCard new }.
+	zathura
+		throws: ReversePolarityCard new
+		to: AtomicBombEffect new
+		from: 'BlueShip'.
+	zathura playTurn.
+	zathura
+		throws: CancellationCard new
+		to: 'anEffect'
+		removing: ReversePolarityCard new
+		from: 'RedShip'.
+	zathura playTurn.
+	zathura playTurn.
+	zathura playTurn.
+	self assert: 'BlueShip' isAtLocker: 0 in: zathura.
+	self assert: 'RedShip' isAtLocker: 0 in: zathura.
+	self assert: 'GreenShip' isAtLocker: 0 in: zathura
+]
+
+{ #category : #'test-reversePolarityCard' }
+ZathuraTest >> testBlueShipThrowsAReversePolarityCardToAtomicBombAndRedShipThrowsARedoCardAndAtomicBombIsntAffected [
+
+	| die ships zathura boardDefinition |
+	die := LoadedDie with: 3.
+	ships := OrderedCollection
+		         with: 'BlueShip'
+		         with: 'RedShip'
+		         with: 'GreenShip'.
+
+	boardDefinition := self
+		                   boardDefinitionWithOnly: AtomicBombEffect new
+		                   at: 7
+		                   of: 10
+		                   andParsec: 50
+		                   played: 3.
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardDefinition
+		           rolling: die
+		           withCards: { 
+				           ReversePolarityCard new.
+				           RedoCard new }.
+	zathura
+		throws: ReversePolarityCard new
+		to: AtomicBombEffect new
+		from: 'BlueShip'.
+	zathura playTurn.
+	zathura throws: RedoCard new to: AtomicBombEffect   new from: 'RedShip'.
+	zathura playTurn.
+	zathura playTurn.
+	zathura playTurn.
+	self assert: 'BlueShip' isAtLocker: 0 in: zathura.
+	self assert: 'RedShip' isAtLocker: 0 in: zathura.
+	self assert: 'GreenShip' isAtLocker: 0 in: zathura
+]
+
+{ #category : #'test-reversePolarityCard' }
+ZathuraTest >> testBlueShipThrowsAReversePolarityCardToReverseAtomicBombAndAtomicBombDontAffectAnyone [
+
+	| die ships zathura boardDefinition |
+	die := LoadedDie with: 3.
+	ships := OrderedCollection
+		         with: 'BlueShip'
+		         with: 'RedShip'
+		         with: 'GreenShip'.
+
+	boardDefinition := self
+		                   boardDefinitionWithOnly: AtomicBombEffect new
+		                   at: 7
+		                   of: 10
+		                   andParsec: 50
+		                   played: 3.
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardDefinition
+		           rolling: die
+		           withCards:
+		           { (ReversePolarityCard new) }.
+	zathura
+		throws: ReversePolarityCard new
+		to: AtomicBombEffect new
+		from: 'BlueShip'.
+	zathura playTurn.
+	zathura playTurn.
+	zathura playTurn.
+	zathura playTurn.
+	self assert: 'BlueShip' isAtLocker: 6 in: zathura.
+	self assert: 'RedShip' isAtLocker: 3 in: zathura.
+	self assert: 'GreenShip' isAtLocker: 3 in: zathura
+]
+
+{ #category : #'test-reversePolarityCard' }
+ZathuraTest >> testBlueShipThrowsAReversePolarityCardToReverseHyperJumpAndEveryShipMovesUpNParsecsExceptBlueShip [
+
+	| die ships zathura boardStructure sequence |
+	die := LoadedDie with: 1.
+	ships := OrderedCollection
+		         with: 'BlueShip'
+		         with: 'RedShip'
+		         with: 'GreenShip'.
+
+	sequence := { 
+		            (Parsec with: 25).
+		            (Parsec with: 31).
+		            (Parsec with: 11) }.
+	boardStructure := self
+		                  boardDefinitionWithOnly:
+		                  (HyperJumpEffect with: sequence)
+		                  at: 3
+		                  of: 10
+		                  andParsec: 100
+		                  played: 3.
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardStructure
+		           rolling: die
+		           withCards: { ReversePolarityCard new }.
+	zathura playTurn.
+	zathura playTurn.
+	zathura playTurn.
+	self assert: 'BlueShip' isAtLocker: 1 in: zathura.
+
+	self assert: 'RedShip' isAtLocker: 1 in: zathura.
+	self assert: 'GreenShip' isAtLocker: 1 in: zathura.
+	zathura throws: ReversePolarityCard new to: HyperJumpEffect new from: 'BlueShip'.
+	zathura playTurn.
+	self assert: 'BlueShip' isAtLocker: 2 in: zathura.
+	self assert: 'RedShip' isAtLocker: 4 in: zathura .
+	self assert: 'GreenShip' isAtLocker: 4 in: zathura .
+]
+
+{ #category : #'test-reversePolarityCard' }
+ZathuraTest >> testBlueShipThrowsAReversePolarityCardToReverseMoonwalkAndEveryShipMovesNLockersExceptBlueShip [
+
+	| die ships zathura boardStructure |
+	die := LoadedDie with: 3.
+	ships := OrderedCollection
+		         with: 'BlueShip'
+		         with: 'RedShip'
+		         with: 'GreenShip'.
+	boardStructure := self
+		                  boardDefinitionWithOnly: (MoonWalkEffect with: 2)
+		                  at: 7
+		                  of: 10
+		                  andParsec: 100
+		                  played: 3.
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardStructure
+		           rolling: die
+		           withCards: { ReversePolarityCard new }.
+	zathura playTurn.
+	zathura playTurn.
+	zathura playTurn.
+	self assert: 'BlueShip' isAtLocker: 3 in: zathura.
+	self assert: 'RedShip' isAtLocker: 3 in: zathura.
+	self assert: 'GreenShip' isAtLocker: 3 in: zathura.
+	zathura
+		throws: ReversePolarityCard new
+		to: MoonWalkEffect new
+		from: 'BlueShip'.
+	zathura playTurn .
+	self assert:'BlueShip' isAtLocker: 4 in: zathura. 
+		self assert: 'RedShip' isAtLocker: 3 in: zathura.
+	self assert: 'GreenShip' isAtLocker: 3 in: zathura.
+]
+
+{ #category : #'test-reversePolarityCard' }
+ZathuraTest >> testBlueShipThrowsAReversePolarityCardToReverseSpeedUpAndEveryShipMovesUp4LockersExceptBlueShip [
+
+	| die ships zathura boardStructure |
+	die := LoadedDie with: 1.
+	ships := OrderedCollection with: 'BlueShip' with: 'RedShip'.
+	boardStructure := self
+		                  boardDefinitionWithOnly: SpeedUpEffect new
+		                  at: 3
+		                  of: 8
+		                  andParsec: 100
+		                  played: 3.
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardStructure
+		           rolling: die
+		           withCards: { ReversePolarityCard new }.
+	zathura playTurn.
+	zathura
+		throws: ReversePolarityCard new
+		to: SpeedUpEffect new
+		from: 'RedShip'.
+	zathura playTurn.
+	self assert: 'BlueShip' isAtLocker: 1 in: zathura.
+	self assert: 'RedShip' isAtLocker: 1 in: zathura.
+	zathura playTurn.
+	self assert: 'BlueShip' isAtLocker: 2 in: zathura.
+	self assert: 'RedShip' isAtLocker: 5 in: zathura.
+]
+
+{ #category : #'test-reversePolarityCard' }
+ZathuraTest >> testBlueShipThrowsAReversePolarityCardToReverseWormHoleAndAffectEveryShipExceptBlueShip [
+
+	| die ships zathura boardStructure |
+	die := LoadedDie with: 4.
+	ships := OrderedCollection with: 'BlueShip' with: 'RedShip'.
+	boardStructure := self
+		                  boardDefinitionWithOnly: WormHoleEffect new
+		                  at: 9
+		                  of: 9
+		                  andParsec: 100
+		                  played: 3.
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardStructure
+		           rolling: die
+		           withCards: { ReversePolarityCard new }.
+	zathura playTurn.
+	zathura playTurn.
+	self assert: 'BlueShip' isAtLocker: 4 in: zathura .
+	self assert: 'RedShip' isAtLocker: 4 in: zathura.
+	zathura throws: ReversePolarityCard new to: WormHoleEffect new from: 'BlueShip'.
+	zathura playTurn .
+	self assert: 'BlueShip' isAtLocker: 8 in: zathura .
+	self assert: 'RedShip' isAtLocker: 0 in: zathura . 
 ]
 
 { #category : #'test-speedCard' }
@@ -676,7 +982,7 @@ ZathuraTest >> testBlueShipThrowsAnOverloadCardToRedShipThenRedShipsThrowsACance
 { #category : #'test-redoCard' }
 ZathuraTest >> testBlueShipThrowsAnOverloadsCardsToRedShipAndGreenShipThrowsACancellationCardAndARedoCardToRedShipThrowsError [
 
-	| diceCup zathura  |
+	| diceCup zathura |
 	diceCup := DiceCup withAll: { 
 			           (LoadedDie with: 3).
 			           (LoadedDie with: 4) }.
@@ -712,14 +1018,13 @@ ZathuraTest >> testBlueShipThrowsAnOverloadsCardsToRedShipAndGreenShipThrowsACan
 				to: 'RedShip'
 				removing: OverloadCard new
 				from: 'GreenShip' ]
-		raise: Error
-		withMessage: 'This card is not active in the table'
+		raiseErrorWithMessage: 'This card is not active in the table'
 ]
 
 { #category : #'test-accelerationCard' }
 ZathuraTest >> testBlueShipThrowsErrorWhenUsesAnAccelerationCardAndItIsNotItsTurn [
 
-	| die ships boardStructure zathura  |
+	| die ships boardStructure zathura |
 	die := LoadedDie with: 7.
 	ships := #( 'BlueShip' 'RedShip' ).
 	boardStructure := self
@@ -738,14 +1043,14 @@ ZathuraTest >> testBlueShipThrowsErrorWhenUsesAnAccelerationCardAndItIsNotItsTur
 	self
 		should: [ 
 		zathura throws: AccelerationCard new toAllShipsFrom: 'BlueShip' ]
-		raise: Error
-		withMessage: 'Permanent cards can only be used when its your turn'
+		raiseErrorWithMessage:
+		'Permanent cards can only be used when its your turn'
 ]
 
 { #category : #'test-overloadCard' }
 ZathuraTest >> testBlueShipThrowsErrorWhenUsesAnOverloadCardAndItIsNotItsTurn [
 
-	| die ships boardStructure zathura  |
+	| die ships boardStructure zathura |
 	die := LoadedDie with: 7.
 	ships := #( 'BlueShip' 'RedShip' ).
 	boardStructure := self
@@ -763,16 +1068,16 @@ ZathuraTest >> testBlueShipThrowsErrorWhenUsesAnOverloadCardAndItIsNotItsTurn [
 	self
 		should: [ 
 		zathura throws: OverloadCard new to: 'RedShip' from: 'BlueShip' ]
-		raise: Error
-		withMessage: 'Permanent cards can only be used when its your turn'
+		raiseErrorWithMessage:
+		'Permanent cards can only be used when its your turn'
 ]
 
 { #category : #'test-speedCard' }
 ZathuraTest >> testBlueShipThrowsErrorWhenUsesAnSpeedCardAndItIsNotItsTurn [
 
-	| die ships boardStructure zathura  |
+	| die ships boardStructure zathura |
 	die := LoadedDie with: 7.
-	ships := #( 'BlueShip' 'RedShip' ).
+	ships := OrderedCollection with: 'BlueShip' with: 'RedShip'.
 	boardStructure := self
 		                  boardDefinitionWithNoEffectsOf: 10
 		                  andParsec: 100
@@ -788,8 +1093,8 @@ ZathuraTest >> testBlueShipThrowsErrorWhenUsesAnSpeedCardAndItIsNotItsTurn [
 	self
 		should: [ 
 		zathura throws: SpeedCard new to: 'RedShip' from: 'BlueShip' ]
-		raise: Error
-		withMessage: 'Permanent cards can only be used when its your turn'
+		raiseErrorWithMessage:
+		'Permanent cards can only be used when its your turn'
 ]
 
 { #category : #'test-redoCard' }
@@ -877,6 +1182,85 @@ ZathuraTest >> testBlueShipsFallsIntoaCardGetterLockerAndGetsAnOverLoadCard [
 	zathura throws: OverloadCard new to: 'RedShip' from: 'BlueShip'
 ]
 
+{ #category : #'test-reversePolarityCard' }
+ZathuraTest >> testBlueShipsThrowsAReversePolarityCardToReverseCardGetterAndEveryShipGetsACardExceptBlueShip [
+
+	| die ships boardDefinition zathura |
+	die := LoadedDie with: 1.
+	ships := OrderedCollection with: 'BlueShip' with: 'RedShip'.
+	boardDefinition := self
+		                   boardDefinitionWithOnly: CardEffect new
+		                   at: 2
+		                   of: 10
+		                   andParsec: 100
+		                   played: 1.
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardDefinition
+		           rolling: die
+		           withCards: { ReversePolarityCard new }.
+	zathura
+		throws: ReversePolarityCard new
+		to: LockerNoEffect new
+		from: 'BlueShip'.
+	zathura
+		throws: ReversePolarityCard new
+		to: CardEffect new
+		from: 'BlueShip'.
+	zathura playTurn.
+	zathura
+		throws: ReversePolarityCard new
+		to: LockerNoEffect new
+		from: 'RedShip'.
+	zathura
+		throws: ReversePolarityCard new
+		to: LockerNoEffect new
+		from: 'RedShip'.
+	zathura
+		throws: ReversePolarityCard new
+		to: CardEffect new
+		from: 'RedShip'.
+	zathura playTurn.
+	self
+		should: [ 
+			zathura
+				throws: ReversePolarityCard new
+				to: CardEffect new
+				from: 'BlueShip' ]
+		raiseErrorWithMessage: 'Card is not in Hand'
+]
+
+{ #category : #'test-reversePolarityCard' }
+ZathuraTest >> testBlueShipsThrowsAReversePolarityToReverseSprintLockerAndEveryShipMovesALockerForEachCardExceptBlueShip [
+
+	| die ships zathura boardStructure |
+	die := LoadedDie with: 1.
+	ships := OrderedCollection
+		         with: 'BlueShip'
+		         with: 'RedShip'
+		         with: 'GreenShip'.
+
+	boardStructure := self
+		                  boardDefinitionWithOnly: SprintEffect new
+		                  at: 2
+		                  of: 10
+		                  andParsec: 100
+		                  played: 3.
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardStructure
+		           rolling: die
+		           withCards: { ReversePolarityCard new }.
+	zathura
+		throws: ReversePolarityCard new
+		to: SprintEffect new
+		from: 'BlueShip'.
+	zathura playTurn.
+	self assert: 'BlueShip' isAtLocker: 1 in: zathura.
+	self assert: 'RedShip' isAtLocker: 2 in: zathura.
+	self assert: 'GreenShip' isAtLocker: 2 in: zathura
+]
+
 { #category : #'test-board' }
 ZathuraTest >> testBoardCanBeInitializedWithLightyears [
 
@@ -895,8 +1279,8 @@ ZathuraTest >> testBoardStructureCannotHaveLessThanTwoLockers [
 	self
 		should: [ 
 		BoardDefinition with: { LockerNoEffect new } and: 20 played: 3 ]
-		raise: Error
-		withMessage: 'Board Structure cannot have less than two lockers'
+		raiseErrorWithMessage:
+		'Board Structure cannot have less than two lockers'
 ]
 
 { #category : #'test-boardDefinitionAssertion' }
@@ -910,8 +1294,8 @@ ZathuraTest >> testBoardStructureCannotHaveLessThanZeroLaps [
 						LockerNoEffect new }
 				and: (Parsec with: 10)
 				played: 0 ]
-		raise: Error
-		withMessage: 'Board Structure cannot have less than zero laps'.
+		raiseErrorWithMessage:
+		'Board Structure cannot have less than zero laps'.
 
 	self
 		should: [ 
@@ -921,8 +1305,8 @@ ZathuraTest >> testBoardStructureCannotHaveLessThanZeroLaps [
 						LockerNoEffect new }
 				and: (Parsec with: 10)
 				played: -3 ]
-		raise: Error
-		withMessage: 'Board Structure cannot have less than zero laps'
+		raiseErrorWithMessage:
+		'Board Structure cannot have less than zero laps'
 ]
 
 { #category : #'test-boardDefinitionAssertion' }
@@ -936,8 +1320,8 @@ ZathuraTest >> testBoardStructureCannotHaveLessThanZeroParsecs [
 						LockerNoEffect new }
 				and: (Parsec with: 0)
 				played: 3 ]
-		raise: Error
-		withMessage: 'Board Structure cannot have less than zero parsecs'.
+		raiseErrorWithMessage:
+		'Board Structure cannot have less than zero parsecs'.
 
 	self
 		should: [ 
@@ -947,8 +1331,8 @@ ZathuraTest >> testBoardStructureCannotHaveLessThanZeroParsecs [
 						LockerNoEffect new }
 				and: (Parsec with: -5)
 				played: 3 ]
-		raise: Error
-		withMessage: 'Board Structure cannot have less than zero parsecs'
+		raiseErrorWithMessage:
+		'Board Structure cannot have less than zero parsecs'
 ]
 
 { #category : #'test-shipWithHandOfCards' }
@@ -971,8 +1355,7 @@ ZathuraTest >> testCardHandThrowsErrorWhenThrownTheThirdCardBeacauseItStartsTheG
 	self
 		should: [ 
 		zathura throws: OverloadCard new to: 'RedShip' from: 'BlueShip' ]
-		raise: Error
-		withMessage: 'Card is not in Hand'
+		raiseErrorWithMessage: 'Card is not in Hand'
 ]
 
 { #category : #'test-zathuraGame' }
@@ -1063,17 +1446,20 @@ ZathuraTest >> testHyperjumpCannotHaveANullParsecSequence [
 
 	self
 		should: [ HyperJumpEffect with: {  } ]
-		raise: Error
-		withMessage: 'Hyperjump cannot have a null parsec sequence'
+		raiseErrorWithMessage:
+		'Hyperjump cannot have a null parsec sequence'
 ]
 
 { #category : #'test-boardDefinitionAssertion' }
 ZathuraTest >> testHyperjumpCannotHaveLessThanZeroParsecsInTheSequence [
 
 	self
-		should: [ HyperJumpEffect with: { (Parsec with: 5). (Parsec with: -2). (Parsec with: 10) } ]
-		raise: Error
-		withMessage:
+		should: [ 
+			HyperJumpEffect with: { 
+					(Parsec with: 5).
+					(Parsec with: -2).
+					(Parsec with: 10) } ]
+		raiseErrorWithMessage:
 		'Hyperjump cannot have less than zero parsecs in the sequence'
 ]
 
@@ -1082,21 +1468,19 @@ ZathuraTest >> testMoonwalkCannotHaveLessThanZeroLockers [
 
 	self
 		should: [ MoonWalkEffect with: 0 ]
-		raise: Error
-		withMessage:
+		raiseErrorWithMessage:
 		'MoonWalk cannot be created with less than zero lockers'.
 
 	self
 		should: [ MoonWalkEffect with: -3 ]
-		raise: Error
-		withMessage:
+		raiseErrorWithMessage:
 		'MoonWalk cannot be created with less than zero lockers'
 ]
 
 { #category : #'test-redoCard' }
 ZathuraTest >> testRedoCardThrowsErrorWhenBlueShipThrowsItBeforeAnyOtherCardHasBeenThrownInTheGame [
 
-	| diceCup zathura  |
+	| diceCup zathura |
 	diceCup := DiceCup withAll: { 
 			           (LoadedDie with: 3).
 			           (LoadedDie with: 4) }.
@@ -1116,15 +1500,113 @@ ZathuraTest >> testRedoCardThrowsErrorWhenBlueShipThrowsItBeforeAnyOtherCardHasB
 	self
 		should: [ 
 		zathura throws: RedoCard new to: 'RedShip' from: 'RedShip' ]
-		raise: Error
-		withMessage:
+		raiseErrorWithMessage:
 		'Redo card must be thrown before another card has been played'
+]
+
+{ #category : #'test-reversePolarityCard' }
+ZathuraTest >> testReversePolarityCardOnlyAffectsClosestLockerFromShip [
+
+	| die ships zathura boardStructure |
+	die := SequencialLoadedDie with: { 5. 1. 1 }.
+	ships := OrderedCollection
+		         with: 'BlueShip'
+		         with: 'RedShip'
+		         with: 'GreenShip'.
+
+	boardStructure := self
+		                  boardDefinitionWithOnly: SprintEffect new
+		                  at: 3
+		                  of: 15
+		                  andParsec: 100
+		                  played: 2.
+
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardStructure
+		           rolling: die
+		           withCards: { ReversePolarityCard new }.
+	zathura playTurn.
+	zathura playTurn.
+	zathura playTurn.
+	zathura
+		throws: ReversePolarityCard new
+		to: SprintEffect new
+		from: 'BlueShip'.
+	zathura playTurn.
+	zathura playTurn.
+	self assert: 'BlueShip' isAtLocker: 11 in: zathura.
+	self assert: 'RedShip' isAtLocker: 2 in: zathura .
+	self assert: 'GreenShip' isAtLocker: 3 in: zathura.
+]
+
+{ #category : #'test-reversePolarityCard' }
+ZathuraTest >> testReversePolarityCardOnlyAffectsOneLocker [
+
+	| die ships zathura boardStructure lockers |
+	die := LoadedDie with: 1.
+	ships := OrderedCollection
+		         with: 'BlueShip'
+		         with: 'RedShip'
+		         with: 'GreenShip'.
+
+	lockers := OrderedCollection new.
+	1 to: 10 do: [ :number | lockers add: LockerNoEffect new ].
+	lockers at: 2 put: SprintEffect new.
+	lockers at: 4 put: SprintEffect new.
+
+	boardStructure := BoardDefinition
+		                  with: lockers
+		                  and: (Parsec with: 100)
+		                  played: 1.
+
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardStructure
+		           rolling: die
+		           withCards: { ReversePolarityCard new }.
+	zathura
+		throws: ReversePolarityCard new
+		to: SprintEffect new
+		from: 'BlueShip'.
+	zathura playTurn.
+	self assert: 'BlueShip' isAtLocker: 1 in: zathura.
+	self assert: 'RedShip' isAtLocker: 2 in: zathura.
+	self assert: 'GreenShip' isAtLocker: 2 in: zathura.
+	zathura throws: ReversePolarityCard new to: SprintEffect new from: 'RedShip'.
+	zathura playTurn .
+	self assert: 'BlueShip' isAtLocker: 2 in: zathura.
+	self assert: 'RedShip' isAtLocker: 3 in: zathura .
+	self assert: 'GreenShip' isAtLocker: 4 in: zathura.
+]
+
+{ #category : #'test-reversePolarityCard' }
+ZathuraTest >> testReversePolarityCardThrowsErrorWhenTryingToReverseAnEffectNotInTable [
+
+	| die ships zathura boardStructure |
+	die := LoadedDie with: 1.
+	ships := OrderedCollection
+		         with: 'BlueShip'
+		         with: 'RedShip'
+		         with: 'GreenShip'.
+
+	boardStructure := self
+		                  boardDefinitionWithNoEffectsOf: 10
+		                  andParsec: 100
+		                  played: 1.
+
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardStructure
+		           rolling: die
+		           withCards: { ReversePolarityCard new }.
+	self should: [ zathura throws: ReversePolarityCard new to: AtomicBombEffect new from:  'BlueShip'] raiseErrorWithMessage: 'Effect not in Board'.
 ]
 
 { #category : #'test-cancellationCard' }
 ZathuraTest >> testShipCantThrowCancellationCardToCancelACardToTheWrongShip [
 
-	| diceCup zathura  |
+	| diceCup zathura |
 	diceCup := DiceCup withAll: { 
 			           (LoadedDie with: 3).
 			           (LoadedDie with: 4) }.
@@ -1154,8 +1636,7 @@ ZathuraTest >> testShipCantThrowCancellationCardToCancelACardToTheWrongShip [
 				to: 'BlueShip'
 				removing: OverloadCard new
 				from: 'RedShip' ]
-		raise: Error
-		withMessage: 'This card is not active in the table'
+		raiseErrorWithMessage: 'This card is not active in the table'
 ]
 
 { #category : #'test-board' }
@@ -1317,6 +1798,34 @@ ZathuraTest >> testShipsFallIntoAHyperJumpLockerAndMovesByTheParsecsInASequence 
 ]
 
 { #category : #'test-sprintEffect' }
+ZathuraTest >> testShipsFallIntoASprintLockerAndDoesntMoveBecauseItHasNoCards [
+
+	| die ships zathura boardStructure |
+	die := LoadedDie with: 1.
+	ships := OrderedCollection
+		         with: 'BlueShip'
+		         with: 'RedShip'
+		         with: 'GreenShip'.
+
+	boardStructure := self
+		                  boardDefinitionWithOnly:
+		                  (SprintEffect new)
+		                  at: 2
+		                  of: 10
+		                  andParsec: 100
+		                  played: 3.
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardStructure
+		           rolling: die
+		           withCards: {OverloadCard new}.
+	zathura throws: OverloadCard new to: 'RedShip' from: 'BlueShip'.
+	zathura throws: OverloadCard new to: 'GreenShip' from: 'BlueShip'.
+	zathura playTurn.
+	self assert: 'BlueShip' isAtLocker: 1 in: zathura .
+]
+
+{ #category : #'test-sprintEffect' }
 ZathuraTest >> testShipsFallIntoASprintLockerAndMovesAPositionForEachCardInHand [
 
 	| die ships zathura boardStructure |
@@ -1429,8 +1938,7 @@ ZathuraTest >> testZathuraCannotBePlayedMoreThanOnce [
 
 	self
 		should: [ zathura play ]
-		raise: Error
-		withMessage: 'Zathura cannot be played more than once'
+		raiseErrorWithMessage: 'Zathura cannot be played more than once'
 ]
 
 { #category : #'test-zathuraGame' }
@@ -1470,8 +1978,8 @@ ZathuraTest >> testZathuraInitializedWithLessThanTwoShipsThrowsError [
 				movedInBoardOf: 10
 				rolling: die
 				withCards: { OverloadCard new } ]
-		raise: Error
-		withMessage: 'Zathura cannot be played with less than two ships'
+		raiseErrorWithMessage:
+		'Zathura cannot be played with less than two ships'
 ]
 
 { #category : #'test-zathuraGame' }
@@ -1704,6 +2212,5 @@ ZathuraTest >> testZathuraWhileItHasNotFinishedAsksWinnerThrowsError [
 
 	self
 		should: [ zathura winner ]
-		raise: Error
-		withMessage: 'Zathura has not finished yet'
+		raiseErrorWithMessage: 'Zathura has not finished yet'
 ]
