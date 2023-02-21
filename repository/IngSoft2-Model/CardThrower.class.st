@@ -34,12 +34,13 @@ CardThrower >> createNewWith: aGroupOfCardHands in: aZathuraGame [
 ]
 
 { #category : #throwing }
-CardThrower >> throw: aCancellationCard to: destinationShip removing: aCard from: sourceShip [ 
+CardThrower >> throw: aCancellationCard to: destinationTarget removing: aCard from: sourceShip [
+
 	(cardHands cardHandOf: sourceShip)
 		throw: aCancellationCard
-		to: destinationShip
+		to: destinationTarget
 		removing: aCard
-		on: zathura .
+		on: zathura
 ]
 
 { #category : #throwing }
@@ -59,10 +60,10 @@ CardThrower >> throws: aCancellationCard removing: aCard from: sourceShip [
 ]
 
 { #category : #throwing }
-CardThrower >> throws: aCard to: destinationShip from: sourceShip [
+CardThrower >> throws: aCard to: destinationTarget from: sourceShip [
 
 	(cardHands cardHandOf: sourceShip)
 		throw: aCard
-		to: destinationShip
+		to: destinationTarget
 		on: zathura
 ]

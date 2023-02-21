@@ -21,6 +21,10 @@ nadie.
 Class {
 	#name : #ReversePolarityCard,
 	#superclass : #Object,
+	#instVars : [
+		'effect',
+		'zathura'
+	],
 	#category : #'IngSoft2-Model'
 }
 
@@ -31,6 +35,29 @@ ReversePolarityCard >> = aCard [
 ]
 
 { #category : #private }
-ReversePolarityCard >> applyEffectTo: anEffect on: aZathuraGame by: aShip [ 
-	aZathuraGame reverseEffectOf: anEffect by: aShip .
+ReversePolarityCard >> applyEffectTo: anEffect on: aZathuraGame by: aTarget [
+
+	self assertIsYourTurn: aTarget in: aZathuraGame.
+	self reverse: anEffect on: aZathuraGame by: aTarget.
+	aZathuraGame addCardToTable:
+		(ActiveCard with: self appliedTo: { 'anEffect' })
+]
+
+{ #category : #asserting }
+ReversePolarityCard >> assertIsYourTurn: aShip in: aZathuraGame [ 
+	(aZathuraGame isTurnOf: aShip) ifFalse: [ 
+		Error signal: 'Permanent cards can only be used when its your turn' ]
+]
+
+{ #category : #removing }
+ReversePolarityCard >> removeEffect [
+	zathura removeReverseOn: effect.
+]
+
+{ #category : #private }
+ReversePolarityCard >> reverse: anEffect on: aZathuraGame by: aShip [
+
+	effect := anEffect.
+	zathura := aZathuraGame.
+	aZathuraGame reverseEffectOf: anEffect by: aShip
 ]

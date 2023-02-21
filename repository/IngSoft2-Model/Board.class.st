@@ -31,7 +31,7 @@ Class {
 		'positionOfShips',
 		'boardDefinition',
 		'lastEffect',
-		'cardManager'
+		'cardOrganizer'
 	],
 	#classInstVars : [
 		'ships'
@@ -93,7 +93,7 @@ Board >> correctPositionOfWinner: aShip [
 { #category : #private }
 Board >> giveCardTo: aShip [
 
-	cardManager addTheNextCardToHandCardOf: aShip
+	cardOrganizer addTheNextCardToHandCardOf: aShip
 ]
 
 { #category : #private }
@@ -112,13 +112,13 @@ Board >> hasCrossFinishLine: aShip [
 	^ positionOfShip numberOfLap >= boardDefinition laps
 ]
 
-{ #category : #initalization }
+{ #category : #initialization }
 Board >> initializeWith: aBoardDefinition withAGroupOf: aCollectionOfShips withCardManager: aCardManager [
 
 	boardDefinition := aBoardDefinition.
 	self addIntoGame: aCollectionOfShips.
 	lastEffect := LockerNoEffect new.
-	cardManager := aCardManager
+	cardOrganizer := aCardManager
 ]
 
 { #category : #private }
@@ -156,7 +156,7 @@ Board >> moveAllShipsBackwardsExcept: aShip by: aNumberOfLockers [
 self moveAllShipsExcept: aShip  by: (aNumberOfLockers * -1).
 ]
 
-{ #category : #moving }
+{ #category : #private }
 Board >> moveAllShipsExcept: aShip by: aNumberOfLockers [ 
 	| ships |
 	ships := (positionOfShips collect: [ :positionOfShip | 
@@ -181,7 +181,7 @@ Board >> moveAllToLockerZero [
 { #category : #private }
 Board >> moveByNumberOfCards: aShip [ 
 	| numberCards |
-	numberCards := cardManager getNumberOfCardsOf: aShip.
+	numberCards := cardOrganizer getNumberOfCardsOf: aShip.
 	self move: aShip  by: numberCards 
 ]
 
@@ -231,6 +231,11 @@ Board >> positionOf: aShip [
 Board >> rankingOf: aShip [
 
 	^ self shipsSortedByPosition indexOf: aShip
+]
+
+{ #category : #private }
+Board >> removeReverseOf: anEffect [ 
+	(boardDefinition findReversedLockerWith: anEffect) reverse.
 ]
 
 { #category : #private }

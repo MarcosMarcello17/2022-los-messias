@@ -36,9 +36,9 @@ Class {
 		'board',
 		'timesPlayed',
 		'ships',
-		'cardManager',
 		'cardHands',
-		'cardThrower'
+		'cardThrower',
+		'cardOrganizer'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -62,14 +62,14 @@ ZathuraGame class >> playBy: ships movedInBoardOf: boardStructure rolling: die w
 
 { #category : #private }
 ZathuraGame >> addCardToTable: aCard [ 
-	cardManager addCardToTable: aCard.
+	cardOrganizer addCardToTable: aCard.
 ]
 
 { #category : #private }
 ZathuraGame >> applyLastEffectOn: aShip with: aRepeatCard [
 
 	board applyLastEffectOn: aShip.
-	cardManager addToTheCardsStack: aRepeatCard
+	cardOrganizer addToTheCardsStack: aRepeatCard
 ]
 
 { #category : #asserting }
@@ -100,7 +100,7 @@ ZathuraGame >> getNumberOfCardsOf: aShip [
 
 { #category : #private }
 ZathuraGame >> giveCardTo: aShip [ 
-	cardHands giveCard: (cardManager giveCard ) to: aShip.
+	cardHands giveCard: (cardOrganizer giveCard ) to: aShip.
 ]
 
 { #category : #state }
@@ -113,7 +113,7 @@ ZathuraGame >> hasFinished [
 ZathuraGame >> initializePlayingBy: aCollectionOfShips movedInBoardOf: boardStructure rolling: aDiceCup withCards: aCollectionOfCards [
 
 	diceCup := aDiceCup.
-	cardManager := CardOrganizer
+	cardOrganizer := CardOrganizer
 		               with: aCollectionOfShips
 		               and: aCollectionOfCards
 		               from: self.
@@ -122,7 +122,7 @@ ZathuraGame >> initializePlayingBy: aCollectionOfShips movedInBoardOf: boardStru
 	board := Board
 		         of: boardStructure
 		         withAll: ships
-		         andCardManager: cardManager.
+		         andCardManager: cardOrganizer.
 cardHands := CardHandsInGame with: aCollectionOfShips.
 cardThrower := CardThrower createNewWith: cardHands  in: self.
 aCollectionOfShips do: [ :ship | 
@@ -140,7 +140,7 @@ ZathuraGame >> isTurnOf: aShip [
 
 { #category : #accessing }
 ZathuraGame >> lastCardThrownOnTheGame [
-	^cardManager lastCardThrownOnTheGame .
+	^cardOrganizer lastCardThrownOnTheGame .
 ]
 
 { #category : #positioning }
@@ -169,7 +169,7 @@ ZathuraGame >> playTurn [
 	aShip := ships next.
 	board
 		changePositionOf: aShip
-		by: diceCup roll + (cardManager findChangeOfRoll: aShip).
+		by: diceCup roll + (cardOrganizer findChangeOfRoll: aShip).
 	self checkIfWon: aShip
 ]
 
@@ -181,7 +181,12 @@ ZathuraGame >> rankingOf: aShip [
 
 { #category : #private }
 ZathuraGame >> removeFromCardsOnTable: aCard with: aCancellationCard [ 
-	cardManager removeFromCardsOnTable: aCard with: aCancellationCard 
+	cardOrganizer removeFromCardsOnTable: aCard with: aCancellationCard 
+]
+
+{ #category : #removing }
+ZathuraGame >> removeReverseOn: anEffect [ 
+	board removeReverseOf: anEffect.
 ]
 
 { #category : #private }
@@ -204,9 +209,9 @@ ZathuraGame >> throws: aCancellationCard removing: aCard from: aShip [
 ]
 
 { #category : #'card - actions' }
-ZathuraGame >> throws: aCard to: aTargetShip from: aShip [
+ZathuraGame >> throws: aCard to: aTarget from: aShip [
 
-	cardThrower   throws: aCard to: aTargetShip from: aShip
+	cardThrower throws: aCard to: aTarget from: aShip
 ]
 
 { #category : #'card - actions' }

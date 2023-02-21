@@ -183,6 +183,30 @@ ZathuraTest >> testBlueShipCantThrowOverloadCardIfNotInHand [
 		raiseErrorWithMessage: 'Card is not in Hand'
 ]
 
+{ #category : #'test-reversePolarityCard' }
+ZathuraTest >> testBlueShipCantThrowReversePolarityCardIfItsNotItsTurn [
+
+	| die ships zathura boardStructure |
+	die := LoadedDie with: 4.
+	ships := OrderedCollection with: 'BlueShip' with: 'RedShip'.
+	boardStructure := self
+		                  boardDefinitionWithOnly: WormHoleEffect new
+		                  at: 9
+		                  of: 9
+		                  andParsec: 100
+		                  played: 3.
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardStructure
+		           rolling: die
+		           withCards: { ReversePolarityCard new }.
+	zathura playTurn.
+	self should: [zathura
+		throws: ReversePolarityCard new
+		to: WormHoleEffect new
+		from: 'BlueShip'.] raiseErrorWithMessage: 'Permanent cards can only be used when its your turn'.
+]
+
 { #category : #'test-board' }
 ZathuraTest >> testBlueShipFallsIntoAAtomicBombAndAllShipsGoToFirstLockerOfTheSameLap [
 
@@ -420,6 +444,84 @@ ZathuraTest >> testBlueShipThrowsARedoCardToRepeatAnotherRedoCardThrownToASpeedC
 		isAt: 8
 		with: 0
 		in: zathura
+]
+
+{ #category : #'test-reversePolarityCard' }
+ZathuraTest >> testBlueShipThrowsAReversePolarityCardToAtomicBombAndRedShipThrowsACancellationCardToReversePolartiyAndAtomicBombIsntAffected [
+
+	| die ships zathura boardDefinition |
+	die := LoadedDie with: 3.
+	ships := OrderedCollection
+		         with: 'BlueShip'
+		         with: 'RedShip'
+		         with: 'GreenShip'.
+
+	boardDefinition := self
+		                   boardDefinitionWithOnly: AtomicBombEffect new
+		                   at: 7
+		                   of: 10
+		                   andParsec: 50
+		                   played: 3.
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardDefinition
+		           rolling: die
+		           withCards: { 
+				           ReversePolarityCard new.
+				           CancellationCard new }.
+	zathura
+		throws: ReversePolarityCard new
+		to: AtomicBombEffect new
+		from: 'BlueShip'.
+	zathura playTurn.
+	zathura
+		throws: CancellationCard new
+		to: 'anEffect'
+		removing: ReversePolarityCard new
+		from: 'RedShip'.
+	zathura playTurn.
+	zathura playTurn.
+	zathura playTurn.
+	self assert: 'BlueShip' isAtLocker: 0 in: zathura.
+	self assert: 'RedShip' isAtLocker: 0 in: zathura.
+	self assert: 'GreenShip' isAtLocker: 0 in: zathura
+]
+
+{ #category : #'test-reversePolarityCard' }
+ZathuraTest >> testBlueShipThrowsAReversePolarityCardToAtomicBombAndRedShipThrowsARedoCardAndAtomicBombIsntAffected [
+
+	| die ships zathura boardDefinition |
+	die := LoadedDie with: 3.
+	ships := OrderedCollection
+		         with: 'BlueShip'
+		         with: 'RedShip'
+		         with: 'GreenShip'.
+
+	boardDefinition := self
+		                   boardDefinitionWithOnly: AtomicBombEffect new
+		                   at: 7
+		                   of: 10
+		                   andParsec: 50
+		                   played: 3.
+	zathura := ZathuraGame
+		           playBy: ships
+		           movedInBoardOf: boardDefinition
+		           rolling: die
+		           withCards: { 
+				           ReversePolarityCard new.
+				           RedoCard new }.
+	zathura
+		throws: ReversePolarityCard new
+		to: AtomicBombEffect new
+		from: 'BlueShip'.
+	zathura playTurn.
+	zathura throws: RedoCard new to: AtomicBombEffect   new from: 'RedShip'.
+	zathura playTurn.
+	zathura playTurn.
+	zathura playTurn.
+	self assert: 'BlueShip' isAtLocker: 0 in: zathura.
+	self assert: 'RedShip' isAtLocker: 0 in: zathura.
+	self assert: 'GreenShip' isAtLocker: 0 in: zathura
 ]
 
 { #category : #'test-reversePolarityCard' }

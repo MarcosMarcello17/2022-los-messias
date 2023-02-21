@@ -27,25 +27,27 @@ RedoCard >> = aCard [
 ]
 
 { #category : #private }
-RedoCard >> applyEffectTo: aShip on: aZathuraGame by: sourceShip [
+RedoCard >> applyEffectTo: aTarget on: aZathuraGame by: sourceShip [
 
-	| aCard |
-	aCard := aZathuraGame lastCardThrownOnTheGame.
-	aCard applyEffectTo: aShip on: aZathuraGame by: sourceShip
+	(self lastCardThrownIn: aZathuraGame)
+		applyEffectTo: aTarget
+		on: aZathuraGame
+		by: sourceShip
 ]
 
 { #category : #private }
 RedoCard >> applyEffectTo: aShip removing: card on: aZathuraGame [
 
-	| aCard |
-	aCard := aZathuraGame lastCardThrownOnTheGame.
-	aCard applyEffectTo: aShip removing: card on: aZathuraGame
+	(self lastCardThrownIn: aZathuraGame )applyEffectTo: aShip removing: card on: aZathuraGame
 ]
 
 { #category : #private }
 RedoCard >> applyEffectToAllShipsOn: zathura by: sourceShip [
 
-	| aCard |
-	aCard := zathura lastCardThrownOnTheGame.
-	aCard applyEffectToAllShipsOn: zathura by: sourceShip
+	(self lastCardThrownIn: zathura)applyEffectToAllShipsOn: zathura by: sourceShip
+]
+
+{ #category : #accessing }
+RedoCard >> lastCardThrownIn: aZathuraGame [ 
+	^aZathuraGame lastCardThrownOnTheGame.
 ]

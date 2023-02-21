@@ -26,11 +26,11 @@ OverloadCard >> = aCard [
 ]
 
 { #category : #private }
-OverloadCard >> applyEffectTo: aShip on: aZathuraGame by: sourceShip [
+OverloadCard >> applyEffectTo: aTarget on: aZathuraGame by: sourceShip [
 
 	self assertIsYourTurn: sourceShip in: aZathuraGame.
 	aZathuraGame addCardToTable:
-		(ActiveCard with: self appliedTo: { aShip })
+		(ActiveCard with: self appliedTo: { aTarget })
 ]
 
 { #category : #asserting }

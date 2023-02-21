@@ -31,7 +31,7 @@ LightYear >> initializeWith: lightYear [
 	lightYears := lightYear
 ]
 
-{ #category : #evaluating }
+{ #category : #accessing }
 LightYear >> value [
 
 	^lightYears 

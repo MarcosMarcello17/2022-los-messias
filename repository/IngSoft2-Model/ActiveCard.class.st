@@ -16,7 +16,7 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'card',
-		'ship'
+		'target'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -46,12 +46,18 @@ ActiveCard >> changeOfRoll [
 ]
 
 { #category : #initialization }
-ActiveCard >> initializeWith: aCard appliedTo: aShip [
+ActiveCard >> initializeWith: aCard appliedTo: aTarget [
+
 	card := aCard.
-	ship := aShip 
+	target := aTarget
+]
+
+{ #category : #actions }
+ActiveCard >> removeEffect [
+	self card = ReversePolarityCard new ifTrue: [ card removeEffect ].
 ]
 
 { #category : #accessing }
 ActiveCard >> ship [
-	^ ship
+	^ target
 ]

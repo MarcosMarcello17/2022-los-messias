@@ -81,6 +81,7 @@ CardsOnTable >> lastCardThrownOnTheGame [
 { #category : #private }
 CardsOnTable >> remove: aCard [ 
 	cardsOnTable remove: aCard.
+	aCard removeEffect.
 ]
 
 { #category : #accessing }

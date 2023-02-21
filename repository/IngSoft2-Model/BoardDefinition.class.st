@@ -31,7 +31,8 @@ Class {
 	#instVars : [
 		'lockers',
 		'laps',
-		'distance'
+		'distance',
+		'lockersAffected'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -102,7 +103,19 @@ BoardDefinition >> findLockerWith: anEffect between: aNumberOfLocker and: end [
 	| nextLockers lockerWithEffect |
 	nextLockers := lockers copyFrom: aNumberOfLocker + 1 to: end.
 	lockerWithEffect := nextLockers select: [ :eff | eff = anEffect ].
+	1 to: nextLockers size do: [ :i | (nextLockers at: i) = anEffect ifTrue: [ lockersAffected add: (LockerAffected with: anEffect  at: (i + aNumberOfLocker )) ] ].
 	^ lockerWithEffect
+]
+
+{ #category : #'finding/searching' }
+BoardDefinition >> findReversedLockerWith: anEffect [
+
+	| locker |
+	locker := lockersAffected select: [ :anAffectedLocker | 
+		          anAffectedLocker effect = anEffect ].
+	locker isEmpty ifTrue: [ ^ self ].
+	lockersAffected remove: locker first.
+	^ lockers at: locker first position
 ]
 
 { #category : #initialization }
@@ -110,7 +123,8 @@ BoardDefinition >> initializeWith: aCollectionOfLockers and: aDistance played: a
 
 	lockers := aCollectionOfLockers.
 	distance := aDistance.
-	laps := aNumberLaps
+	laps := aNumberLaps.
+	lockersAffected:= OrderedCollection new.
 ]
 
 { #category : #accessing }

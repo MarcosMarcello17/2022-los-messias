@@ -28,7 +28,7 @@ RepeatCard >> = aCard [
 ]
 
 { #category : #private }
-RepeatCard >> applyEffectTo: aShip on: aZathuraGame by: sourceShip [
+RepeatCard >> applyEffectTo: aTarget on: aZathuraGame by: sourceShip [
 
-	aZathuraGame applyLastEffectOn: aShip with: self
+	aZathuraGame applyLastEffectOn: aTarget with: self
 ]

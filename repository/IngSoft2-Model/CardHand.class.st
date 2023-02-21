@@ -73,21 +73,20 @@ CardHand >> throw: aCancelationCard removingToAll: aCard on: aZathuraGame [
 ]
 
 { #category : #throwing }
-CardHand >> throw: aCard to: aShip on: aZathuraGame [
+CardHand >> throw: aCard to: aTarget on: aZathuraGame [
 
 	self assertCardIsInHand: aCard.
-	aCard applyEffectTo: aShip on: aZathuraGame  by: self ship.
+	aCard applyEffectTo: aTarget on: aZathuraGame by: self ship.
 	self remove: aCard
 ]
 
 { #category : #throwing }
-CardHand >> throw: cancellationCard to: aShip removing: aCard on: aZathuraGame [
+CardHand >> throw: cancellationCard to: aTarget removing: aCard on: aZathuraGame [
 
 	cancellationCard
-		applyEffectTo: { aShip }
+		applyEffectTo: { aTarget }
 		removing: aCard
-		on: aZathuraGame 
-		.
+		on: aZathuraGame.
 	self remove: cancellationCard
 ]
 
